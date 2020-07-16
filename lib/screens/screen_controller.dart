@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pureair/blocs/tabs/tabs_bloc.dart';
 import 'package:pureair/screens/screen_widget.dart';
 import 'package:pureair/src/model/screen.dart';
-import 'package:pureair/widgets/pureair_app_bar.dart';
 import 'package:pureair/widgets/pureair_bottom_nav_bar.dart';
 
 class ScreenController extends StatefulWidget {

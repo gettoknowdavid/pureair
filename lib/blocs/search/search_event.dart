@@ -7,24 +7,24 @@ abstract class SearchEvent extends Equatable {
   List<Object> get props => [];
 }
 
-class FetchSearch extends SearchEvent {
+class SearchCity extends SearchEvent {
   final String city;
 
-  FetchSearch(this.city);
+  SearchCity(this.city);
 
   @override
-  List<Object> get props => [];
+  List<Object> get props => [city];
 }
 
-class LoadSearch extends SearchEvent {}
 
-class LoadStationData extends SearchEvent {}
 
-class AddStation extends SearchEvent {
-  final SearchData data;
+class RecentCity extends SearchEvent {
+  final String city;
+  final int uid;
 
-  AddStation(this.data);
+  RecentCity(this.city, this.uid);
 
   @override
-  List<Object> get props => [data];
+  List<Object> get props => [city, uid];
 }
+

@@ -25,6 +25,7 @@ void runPureAir(Repository repository) async {
             return SearchBloc(repository);
           },
         ),
+        
       ],
       child: App(),
     ),

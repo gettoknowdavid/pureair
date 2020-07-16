@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pureair/src/model/aqi.dart';
 
-
-
 class AqiHelper {
   final Aqi aqiModel;
 
@@ -12,16 +10,16 @@ class AqiHelper {
     Color color;
     var aqi = aqiModel.data.aqi;
     if (aqi < 51)
-      color = Colors.lightGreen;
+      color = Color(0xFF1F8A51);
     else if (aqi < 101)
-      color = Colors.yellow;
+      color = Color(0xFFFED714);
     else if (aqi < 151)
-      color = Colors.orange;
+      color = Color(0xFFF9841F);
     else if (aqi < 201)
-      color = Colors.red;
+      color = Color(0xFFB90027);
     else if (aqi < 301)
-      color = Colors.purple;
-    else if (aqi < 501) color = Colors.red[900];
+      color = Color(0xFF4F008A);
+    else if (aqi < 501) color = Color(0xFF67001B);
     return color;
   }
 

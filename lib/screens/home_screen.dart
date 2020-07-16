@@ -6,7 +6,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:pureair/blocs/model/model_bloc.dart';
-import 'package:pureair/blocs/search/search_bloc.dart';
 import 'package:pureair/widgets/aqi_widget.dart';
 import 'package:pureair/widgets/check_connection_widget.dart';
 import 'package:pureair/widgets/error_screen.dart';
@@ -146,18 +145,20 @@ class _HomeScreenState extends State<HomeScreen> {
             onPressed: _bottomSheetCallBack,
           ),
         ),
-        body: ListView(
-          shrinkWrap: true,
-          primary: false,
-          padding: EdgeInsets.symmetric(vertical: 26),
-          children: <Widget>[
-            BlocBuilder<ModelBloc, ModelState>(
+        body: BlocBuilder<ModelBloc, ModelState>(
               builder: (context, state) {
                 if (state is ModelLoaded) {
-                  return AqiWidget(
-                    model: state.model,
-                    height: aqiWidgetHeight,
-                    width: aqiWidgetWidth,
+                  return ListView(
+                    shrinkWrap: true,
+          primary: false,
+          padding: EdgeInsets.symmetric(vertical: 26),
+                    children: <Widget>[
+                      AqiWidget(
+                        model: state.model,
+                        height: aqiWidgetHeight,
+                        width: aqiWidgetWidth,
+                      ),
+                    ],
                   );
                 } else if (state is ModelNotLoaded) {
                   return ErrorScreen(size: size);
@@ -166,30 +167,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 }
               },
             ),
-            SizedBox(height: 30),
-            BlocBuilder<SearchBloc, SearchState>(
-              builder: (context, state) {
-                if (state is StoredStations) {
-                  return ListView.builder(
-                    shrinkWrap: true,
-                    primary: false,
-                    itemCount: state.stations.length,
-                    itemBuilder: (context, index) {
-                      return Container(
-                        child: Text(state.stations[index].aqi),
-                      );
-                    },
-                  );
-                } else {
-                  return Container(
-                    height: 30,
-                    color: Colors.pink,
-                  );
-                }
-              },
-            ),
-          ],
-        ),
       ),
     );
   }

@@ -5,18 +5,15 @@ import 'package:pureair/src/core/repository.dart';
 import 'package:pureair/src/database/pureair_database.dart';
 import 'package:pureair/src/model/aqi.dart';
 import 'package:pureair/src/model/pure_air_theme.dart';
-import 'package:pureair/src/model/search_model/search.dart';
 import 'package:pureair/src/model/search_model/search_aqi.dart';
 import 'package:sembast/sembast.dart';
 
 class DbRepository extends Repository {
   static const String AQI_STORE_NAME = '__air_quality__';
   static const String THEME_STORE_NAME = '__theme_store__';
-  static const String SEARCH_STORE_NAME = '__search_store__';
 
   final store = intMapStoreFactory.store(AQI_STORE_NAME);
   final themeStore = intMapStoreFactory.store(THEME_STORE_NAME);
-  final searchStore = intMapStoreFactory.store(SEARCH_STORE_NAME);
 
   Future<Database> get _database async =>
       await PureAirDatabase.instance.database;
@@ -67,17 +64,5 @@ class DbRepository extends Repository {
     var json = jsonDecode(source);
     var main = SearchAqi.fromJson(json);
     return main;
-  }
-
-  @override
-  Future<Search> get loadSearchModel async {
-    final record = await searchStore.record(1).get(await _database);
-
-    return record == null ? null : Search.fromJson(record);
-  }
-
-  @override
-  Future saveSearchModel(Search search) async {
-    await searchStore.add(await _database, search.toJson());
   }
 }

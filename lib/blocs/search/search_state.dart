@@ -9,31 +9,13 @@ abstract class SearchState extends Equatable {
 
 class SearchLoading extends SearchState {}
 
-class SearchResult extends SearchState {
-  final List<SearchData> stations;
+class SearchLoaded extends SearchState {
+  final SearchAqi searchAqi;
 
-  SearchResult(this.stations);
-
-  @override
-  List<Object> get props => [stations];
-}
-
-class StoredStations extends SearchState {
-  final List<SearchData> stations;
-
-  StoredStations(this.stations);
+  SearchLoaded(this.searchAqi);
 
   @override
-  List<Object> get props => [stations];
+  List<Object> get props => [searchAqi];
 }
 
 class SearchNotLoaded extends SearchState {}
-
-class SearchNotFound extends SearchState {
-  final String city;
-
-  SearchNotFound(this.city);
-
-  @override
-  List<Object> get props => [city];
-}
