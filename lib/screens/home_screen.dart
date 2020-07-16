@@ -6,8 +6,13 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:pureair/blocs/model/model_bloc.dart';
-import 'package:pureair/widgets/air_purifier_image.dart';
+import 'package:pureair/blocs/search/search_bloc.dart';
 import 'package:pureair/widgets/aqi_widget.dart';
+import 'package:pureair/widgets/check_connection_widget.dart';
+import 'package:pureair/widgets/error_screen.dart';
+import 'package:pureair/widgets/loading_indicator.dart';
+import 'package:pureair/widgets/pureair_app_bar.dart';
+import 'package:pureair/widgets/pureair_bottom_sheet.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -15,50 +20,80 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final RefreshController _refreshController = RefreshController();
-  Size get size => MediaQuery.of(context).size;
+  GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  RefreshController _refreshController = RefreshController();
   ModelBloc get modelBloc => BlocProvider.of<ModelBloc>(context);
+  StreamSubscription<ConnectivityResult> _connSubscription;
+
+  Size get size => MediaQuery.of(context).size;
   final Connectivity _connectivity = Connectivity();
-  StreamSubscription<ConnectivityResult> _connectivitySubscription;
+  VoidCallback _bottomSheetCallBack;
 
   @override
   void initState() {
     super.initState();
-    _connectivitySubscription =
-        _connectivity.onConnectivityChanged.listen(_updateConnectionStatus);
+    _connSubscription =
+        _connectivity.onConnectivityChanged.listen(_updateConnStatus);
+    _bottomSheetCallBack = _showBottomSheet;
   }
 
   @override
   void dispose() {
-    _connectivitySubscription.cancel();
+    _connSubscription.cancel();
     super.dispose();
+  }
+
+  void _showBottomSheet() {
+    setState(() {
+      _bottomSheetCallBack = null;
+    });
+
+    _scaffoldKey.currentState
+        .showBottomSheet(
+          (context) => PureAirBottomSheet(
+            size: size,
+            close: () => Navigator.pop(context),
+          ),
+          elevation: 100,
+          clipBehavior: Clip.antiAliasWithSaveLayer,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.vertical(
+              top: Radius.circular(40),
+            ),
+          ),
+        )
+        .closed
+        .whenComplete(() {
+      if (mounted) {
+        setState(() {
+          _bottomSheetCallBack = _showBottomSheet;
+        });
+      }
+    });
+  }
+
+  Future<void> _updateConnStatus(ConnectivityResult result) async {
+    if (result == ConnectivityResult.none) {
+      try {
+        modelBloc.add(LoadModel());
+      } catch (_) {
+        modelBloc.add(RefreshModel());
+      }
+    } else {
+      modelBloc.add(RefreshModel());
+    }
   }
 
   Future<void> initConnectivity() async {
     ConnectivityResult result;
-    // Platform messages may fail, so we use a try/catch PlatformException.
     try {
       result = await _connectivity.checkConnectivity();
     } on PlatformException catch (e) {
       print(e.toString());
     }
+    if (!mounted) return Future.value(null);
 
-    // If the widget was removed from the tree while the asynchronous platform
-    // message was in flight, we want to discard the reply rather than calling
-    // setState to update our non-existent appearance.
-    if (!mounted) {
-      return Future.value(null);
-    }
-
-    return _updateConnectionStatus(result);
-  }
-
-  Future<void> _updateConnectionStatus(ConnectivityResult result) async {
-    if (result == ConnectivityResult.none) {
-      modelBloc.add(LoadModel());
-    } else {
-      modelBloc.add(RefreshModel());
-    }
+    return _updateConnStatus(result);
   }
 
   _modalBottomSheet() {
@@ -67,29 +102,7 @@ class _HomeScreenState extends State<HomeScreen> {
       backgroundColor: Colors.transparent,
       isDismissible: true,
       builder: (context) {
-        return Container(
-          height: size.shortestSide * 0.3,
-          width: size.width,
-          alignment: Alignment.topCenter,
-          child: Container(
-            height: size.height * 0.1,
-            width: size.width * 0.92,
-            padding: EdgeInsets.symmetric(horizontal: 30),
-            alignment: Alignment.center,
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(24),
-            ),
-            child: Text(
-              'Please check your internet connection and try again.',
-              style: TextStyle(
-                fontSize: 22,
-                fontWeight: FontWeight.w600,
-              ),
-              textAlign: TextAlign.center,
-            ),
-          ),
-        );
+        return CheckConnectionWidget(size: size);
       },
     );
   }
@@ -99,7 +112,11 @@ class _HomeScreenState extends State<HomeScreen> {
 
     if (connectivityResult == ConnectivityResult.none) {
       _modalBottomSheet();
-      modelBloc.add(LoadModel());
+      try {
+        modelBloc.add(LoadModel());
+      } catch (_) {
+        modelBloc.add(RefreshModel());
+      }
     } else {
       modelBloc.add(RefreshModel());
     }
@@ -120,105 +137,58 @@ class _HomeScreenState extends State<HomeScreen> {
         await refresher(context);
         _refreshController.refreshCompleted();
       },
-      child: BlocBuilder<ModelBloc, ModelState>(
-        builder: (context, state) {
-          if (state is ModelLoading) {
-            return Center(
-              child: CircularProgressIndicator(),
-            );
-          } else if (state is ModelLoaded) {
-            return ListView(
-              shrinkWrap: true,
-              primary: false,
-              padding: EdgeInsets.symmetric(vertical: 26),
-              children: <Widget>[
-                AqiWidget(
-                  model: state.model,
-                  height: aqiWidgetHeight,
-                  width: aqiWidgetWidth,
-                ),
-                SizedBox(height: 40),
-                AirPurifierImage(
-                  size: size,
-                  height: aqiWidgetHeight,
-                  width: aqiWidgetWidth,
-                  onPressed: () {},
-                ),
-              ],
-            );
-          } else if (state is ModelNotLoaded) {
-            return ErrorScreen(size: size);
-          } else {
-            return Center(
-              child: Container(
-                height: size.shortestSide * 0.4,
-                width: size.shortestSide * 0.9,
-                decoration: BoxDecoration(
-                  boxShadow: [
-                    const BoxShadow(
-                      color: Colors.black12,
-                      blurRadius: 70,
-                    ),
-                  ],
-                ),
-                child: Card(
-                  elevation: 200,
-                  shadowColor: Colors.black,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30),
-                  ),
-                  child: Center(
-                    child: CircularProgressIndicator(),
-                  ),
-                ),
-              ),
-            );
-          }
-        },
-      ),
-    );
-  }
-}
-
-class ErrorScreen extends StatelessWidget {
-  const ErrorScreen({
-    Key key,
-    @required this.size,
-  }) : super(key: key);
-
-  final Size size;
-
-  @override
-  Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
-
-    return Center(
-      child: Container(
-        height: size.shortestSide * 0.4,
-        width: size.shortestSide * 0.9,
-        decoration: BoxDecoration(
-          boxShadow: [
-            const BoxShadow(
-              color: Colors.black12,
-              blurRadius: 70,
+      child: Scaffold(
+        key: _scaffoldKey,
+        appBar: PureAirAppBar(
+          title: 'HOME',
+          actions: IconButton(
+            icon: Icon(Icons.add),
+            onPressed: _bottomSheetCallBack,
+          ),
+        ),
+        body: ListView(
+          shrinkWrap: true,
+          primary: false,
+          padding: EdgeInsets.symmetric(vertical: 26),
+          children: <Widget>[
+            BlocBuilder<ModelBloc, ModelState>(
+              builder: (context, state) {
+                if (state is ModelLoaded) {
+                  return AqiWidget(
+                    model: state.model,
+                    height: aqiWidgetHeight,
+                    width: aqiWidgetWidth,
+                  );
+                } else if (state is ModelNotLoaded) {
+                  return ErrorScreen(size: size);
+                } else {
+                  return LoadingIndicator(size: size);
+                }
+              },
+            ),
+            SizedBox(height: 30),
+            BlocBuilder<SearchBloc, SearchState>(
+              builder: (context, state) {
+                if (state is StoredStations) {
+                  return ListView.builder(
+                    shrinkWrap: true,
+                    primary: false,
+                    itemCount: state.stations.length,
+                    itemBuilder: (context, index) {
+                      return Container(
+                        child: Text(state.stations[index].aqi),
+                      );
+                    },
+                  );
+                } else {
+                  return Container(
+                    height: 30,
+                    color: Colors.pink,
+                  );
+                }
+              },
             ),
           ],
-        ),
-        child: Card(
-          elevation: 200,
-          shadowColor: Colors.black,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(30),
-          ),
-          child: Container(
-            alignment: Alignment.center,
-            padding: EdgeInsets.symmetric(horizontal: 14.0),
-            child: Text(
-              'Please check your internet connection and try again.',
-              textAlign: TextAlign.center,
-              style: textTheme.headline5.copyWith(),
-            ),
-          ),
         ),
       ),
     );

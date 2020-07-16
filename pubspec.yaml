@@ -43,6 +43,7 @@ dependencies:
   response: ^0.1.1
   sliding_up_panel: ^1.0.2
   flutter_launcher_icons: ^0.7.5
+  autocomplete_textfield: ^1.7.3
   geolocator:
   intl_translation:
   json_annotation:

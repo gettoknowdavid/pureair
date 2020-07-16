@@ -26,7 +26,6 @@ class AqiWidget extends StatefulWidget {
 
 class _AqiWidgetState extends State<AqiWidget> {
   TextTheme get textTheme => Theme.of(context).textTheme;
-  AqiHelper get helper => AqiHelper( widget.model);
 
   Widget onBottom(Widget child) {
     return Positioned.fill(
@@ -38,6 +37,8 @@ class _AqiWidgetState extends State<AqiWidget> {
   }
 
   Widget get _buildAqiValue {
+    AqiHelper helper = AqiHelper(widget.model);
+
     return Container(
       height: widget.width * 0.8,
       width: widget.width,
@@ -57,6 +58,8 @@ class _AqiWidgetState extends State<AqiWidget> {
   }
 
   Widget get _buildHealthTip {
+    AqiHelper helper = AqiHelper(widget.model);
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 36.0),
       child: Text(
@@ -72,15 +75,8 @@ class _AqiWidgetState extends State<AqiWidget> {
   }
 
   Widget get _buildLocation {
-    // final location = widget.model.location;
-    // final country = location.country;
-    // var _city = location.city;
+    AqiHelper helper = AqiHelper(widget.model);
 
-    // if (_city == null) {
-    //   _city  = '';
-    // } else {
-    //   _city = _city.contains('null') ? '' : '$_city—';
-    // }
     return Padding(
       padding: EdgeInsets.fromLTRB(30, 10, 30, 0),
       child: Row(
@@ -110,6 +106,8 @@ class _AqiWidgetState extends State<AqiWidget> {
   }
 
   Widget get _buildDate {
+    AqiHelper helper = AqiHelper(widget.model);
+
     return AutoSizeText(
       formattedDate,
       style: TextStyle(
@@ -122,7 +120,6 @@ class _AqiWidgetState extends State<AqiWidget> {
   }
 
   Stack get _buildStack {
-    // final helper = AqiHelper( model.aqi);
     return Stack(
       fit: StackFit.passthrough,
       alignment: Alignment.bottomCenter,
@@ -158,6 +155,8 @@ class _AqiWidgetState extends State<AqiWidget> {
 
   @override
   Widget build(BuildContext context) {
+    AqiHelper helper = AqiHelper(widget.model);
+
     return GestureDetector(
       onTap: () {
         Navigator.of(context).push(

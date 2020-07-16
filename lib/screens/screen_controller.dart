@@ -47,7 +47,6 @@ class _ScreenControllerState extends State<ScreenController> {
     for (Screen screen in Screen.values) {
       _list.add(
         PureBottomBarItem(
-          // activeIcon: _activeIcons(screen),
           icon: _icons(screen),
           title: _titles(screen),
           activeColor: Color(0xFF341FBF),
@@ -71,10 +70,6 @@ class _ScreenControllerState extends State<ScreenController> {
             children: <Widget>[
               Scaffold(
                 backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-                appBar: PureAirAppBar(
-                  title: state.widget.title,
-                  isHome: selectedIndex == Screen.home.index,
-                ),
                 body: state.widget.widget,
                 bottomNavigationBar: PureAirBottomNavBar(
                   size: size,

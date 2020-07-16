@@ -9,7 +9,7 @@ class PureAirAppBar extends StatelessWidget implements PreferredSizeWidget {
     this.leading,
     this.actions,
     this.openDrawer,
-    this.isHome,
+    // this.isHome,
   })  : prefferedSize = const Size.fromHeight(96),
         super(key: key);
 
@@ -19,7 +19,7 @@ class PureAirAppBar extends StatelessWidget implements PreferredSizeWidget {
   final Widget leading;
   final Widget actions;
   final VoidCallback openDrawer;
-  final bool isHome;
+  // final bool isHome;
 
   @override
   Widget build(BuildContext context) {
@@ -48,11 +48,7 @@ class PureAirAppBar extends StatelessWidget implements PreferredSizeWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
                 leading ?? ImageIcon(AssetImage('images/water.png')),
-                actions ??
-                    GestureDetector(
-                      onTap: () {},
-                      child: Icon(Icons.more_vert),
-                    ),
+                actions ?? Container(),
               ],
             ),
             Container(

@@ -1,0 +1,184 @@
+import 'package:autocomplete_textfield/autocomplete_textfield.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:pureair/blocs/search/search_bloc.dart';
+import 'package:pureair/screens/search_screen.dart';
+import 'package:pureair/src/model/aqi.dart';
+import 'package:pureair/src/model/search_model/search_data.dart';
+import 'package:pureair/widgets/country_list.dart';
+import 'package:pureair/widgets/loading_indicator.dart';
+
+class PureAirBottomSheet extends StatefulWidget {
+  const PureAirBottomSheet({
+    Key key,
+    @required this.size,
+    @required this.close,
+  }) : super(key: key);
+
+  final Size size;
+  final VoidCallback close;
+
+  @override
+  _PureAirBottomSheetState createState() => _PureAirBottomSheetState();
+}
+
+class _PureAirBottomSheetState extends State<PureAirBottomSheet> {
+  GlobalKey<AutoCompleteTextFieldState<SearchCountry>> _textFieldKey =
+      GlobalKey();
+  Size get size => MediaQuery.of(context).size;
+  TextEditingController textController = TextEditingController();
+  SearchBloc get searchBloc => BlocProvider.of<SearchBloc>(context);
+
+  AutoCompleteTextField searchTextField;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final textTheme = theme.textTheme;
+
+    // searchTextField = AutoCompleteTextField<SearchData>(
+    //   style: new TextStyle(color: Colors.black, fontSize: 16.0),
+    //   decoration: new InputDecoration(
+    //     suffixIcon: Container(
+    //       width: 85.0,
+    //       height: 60.0,
+    //     ),
+    //     contentPadding: EdgeInsets.fromLTRB(10.0, 30.0, 10.0, 20.0),
+    //     filled: true,
+    //     hintText: 'Search Player Name',
+    //     hintStyle: TextStyle(
+    //       color: Colors.black,
+    //     ),
+    //   ),
+    //   itemBuilder: (BuildContext context, SearchData suggestion) {},
+    // );
+
+    return BlocBuilder<SearchBloc, SearchState>(
+      builder: (context, state) {
+        if (state is StoredStations) {
+          return Container();
+        }
+        if (state is SearchResult) {
+          return Container(
+            height: widget.size.height,
+            width: widget.size.width,
+            color: colorScheme.onPrimary,
+            child: Column(
+              children: <Widget>[
+                Container(
+                  alignment: Alignment.centerRight,
+                  margin: EdgeInsets.all(30),
+                  color: Colors.transparent,
+                  child: GestureDetector(
+                    child: Text('CANCEL', style: textTheme.headline6),
+                    onTap: widget.close,
+                  ),
+                ),
+                Container(
+                  width: widget.size.width,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.all(Radius.circular(12.0)),
+                    color: Theme.of(context).brightness == Brightness.light
+                        ? Colors.black12
+                        : colorScheme.surface,
+                  ),
+                  padding: EdgeInsets.symmetric(horizontal: 26),
+                  margin: EdgeInsets.symmetric(horizontal: 20),
+                  child: searchTextField = AutoCompleteTextField<SearchCountry>(
+                    controller: textController,
+                    key: _textFieldKey,
+                    clearOnSubmit: false,
+                    focusNode: FocusNode(),
+                    suggestions: countries,
+                    itemBuilder: (context, SearchCountry suggestions) {
+                      return Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: <Widget>[
+                          Text(
+                            suggestions.name,
+                            style: TextStyle(fontSize: 16.0)
+                          ),
+                        ],
+                      );
+                    },
+                    itemFilter: (SearchCountry suggestion, query) {
+                      return suggestion.name
+                          .toLowerCase()
+                          .startsWith(query.toLowerCase());
+                    },
+                    itemSorter: (SearchCountry a, SearchCountry b) {
+                      return a.name.compareTo(b.name);
+                    },
+                    itemSubmitted: (SearchCountry suggestions) {
+                      setState(() {
+                        searchTextField.textField.controller.text =
+                            suggestions.name;
+                      });
+                      searchBloc.add(FetchSearch(suggestions.name));
+                      print(state.stations);
+                    },
+                    style: new TextStyle(color: Colors.black, fontSize: 16.0),
+                    decoration: new InputDecoration(
+                      suffixIcon: Container(
+                        width: 85.0,
+                        height: 60.0,
+                      ),
+                      contentPadding:
+                          EdgeInsets.fromLTRB(10.0, 30.0, 10.0, 20.0),
+                      filled: true,
+                      hintText: 'Search Player Name',
+                      hintStyle: TextStyle(color: Colors.black),
+                    ),
+                  ),
+                ),
+                // Container(
+                //   width: size.width,
+                //   decoration: BoxDecoration(
+                //     borderRadius: BorderRadius.all(Radius.circular(12.0)),
+                //     color: Theme.of(context).brightness == Brightness.light
+                //         ? Colors.black12
+                //         : colorScheme.surface,
+                //   ),
+                //   padding: EdgeInsets.symmetric(horizontal: 26),
+                //   margin: EdgeInsets.symmetric(horizontal: 20),
+                //   child: TextFormField(
+                //     focusNode: FocusNode(),
+                //     autofocus: true,
+                //     controller: textController,
+                //     style: textTheme.headline6.copyWith(
+                //       fontWeight: FontWeight.w400,
+                //     ),
+                //     decoration: InputDecoration(
+                //       prefixIcon: Icon(Icons.location_city),
+                //       suffix: IconButton(
+                //         icon: Icon(Icons.search),
+                //         onPressed: () {},
+                //       ),
+                //       border: InputBorder.none,
+                //     ),
+                //   ),
+                // ),
+              ],
+            ),
+          );
+        } else if (state is SearchLoading) {
+          if (textController.text.isEmpty) {
+            return Container();
+          } else {
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+        } else {
+          return ErrorState(
+            size: size,
+            showRefreshButton: true,
+            errorMessage:
+                'We are sorry, but "${textController.text}" is not a part of our supported stations.',
+          );
+        }
+      },
+    );
+  }
+}

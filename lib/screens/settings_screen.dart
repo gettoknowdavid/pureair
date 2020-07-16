@@ -21,7 +21,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    Widget _buildListTile(String title, {bool enabled = false, Function() onTap}) {
+    Widget _buildListTile(String title,
+        {bool enabled = false, Function() onTap}) {
       return Container(
         padding: const EdgeInsets.only(bottom: 8.0),
         child: ListTile(
@@ -42,63 +43,66 @@ class _SettingsScreenState extends State<SettingsScreen> {
       );
     }
 
-    return Container(
-      height: size.height,
-      width: size.width,
-      alignment: Alignment.center,
-      child: ListView(
-        padding: EdgeInsets.symmetric(horizontal: 26),
-        children: <Widget>[
-          _CustomListTile(
-            header: 'Account',
-            content: <Widget>[
-              _buildListTile('Create an account'),
-            ],
-          ),
-          _CustomListTile(
-            header: 'PREFERENCES',
-            content: <Widget>[
-              _buildListTile('Recommendations'),
-              _buildListTile('Units'),
-              _buildListTile('Sensitivity'),
-              _buildListTile(
-                'Theme',
-                enabled: true,
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => SelectTheme(),
-                    ),
-                  );
-                },
-              ),
-            ],
-          ),
-          _CustomListTile(
-            header: 'NOTIFICATIONS',
-            content: [
-              _buildListTile('Favourite City'),
-              _buildListTile('Smart notifications'),
-              _buildListTile('Morning report'),
-              _buildListTile('Evening report'),
-            ],
-          ),
-          _CustomListTile(
-            header: 'Help',
-            content: <Widget>[
-              _buildListTile('FAQ'),
-              _buildListTile('Contact us'),
-            ],
-          ),
-          _CustomListTile(
-            header: 'LINKS',
-            content: [
-              _buildListTile('Shop'),
-              _buildListTile('Legal'),
-            ],
-          ),
-        ],
+    return Scaffold(
+      appBar: PureAirAppBar(title: 'SETTINGS'),
+      body: Container(
+        height: size.height,
+        width: size.width,
+        alignment: Alignment.center,
+        child: ListView(
+          padding: EdgeInsets.symmetric(horizontal: 26),
+          children: <Widget>[
+            _CustomListTile(
+              header: 'Account',
+              content: <Widget>[
+                _buildListTile('Create an account'),
+              ],
+            ),
+            _CustomListTile(
+              header: 'PREFERENCES',
+              content: <Widget>[
+                _buildListTile('Recommendations'),
+                _buildListTile('Units'),
+                _buildListTile('Sensitivity'),
+                _buildListTile(
+                  'Theme',
+                  enabled: true,
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => SelectTheme(),
+                      ),
+                    );
+                  },
+                ),
+              ],
+            ),
+            _CustomListTile(
+              header: 'NOTIFICATIONS',
+              content: [
+                _buildListTile('Favourite City'),
+                _buildListTile('Smart notifications'),
+                _buildListTile('Morning report'),
+                _buildListTile('Evening report'),
+              ],
+            ),
+            _CustomListTile(
+              header: 'Help',
+              content: <Widget>[
+                _buildListTile('FAQ'),
+                _buildListTile('Contact us'),
+              ],
+            ),
+            _CustomListTile(
+              header: 'LINKS',
+              content: [
+                _buildListTile('Shop'),
+                _buildListTile('Legal'),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }

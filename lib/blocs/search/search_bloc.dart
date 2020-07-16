@@ -11,7 +11,7 @@ part 'search_event.dart';
 part 'search_state.dart';
 
 class SearchBloc extends Bloc<SearchEvent, SearchState> {
-  SearchBloc(this.repository) : super(SearchLoading());
+  SearchBloc(this.repository) : super(SearchResult([]));
 
   final Repository repository;
 
@@ -19,7 +19,7 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
   Stream<SearchState> mapEventToState(
     SearchEvent event,
   ) async* {
-   if (event is LoadStationData) {
+    if (event is LoadStationData) {
       yield* _mapLoadStationDataToState();
     } else if (event is FetchSearch) {
       yield* _mapFecthSearchToState(event);
@@ -46,7 +46,13 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
   Stream<SearchState> _mapFecthSearchToState(FetchSearch event) async* {
     SearchAqi searchedCity = await repository.searchModel(event.city);
 
-    yield SearchResult(searchedCity.data);
+    yield StoredStations(searchedCity.data);
+  }
+
+  Future<List<SearchData>> _getStations(String city) async {
+    SearchAqi searchedCity = await repository.searchModel(city);
+    final _list = list..addAll(searchedCity.data);
+    return _list;
   }
 
   List<SearchData> list = [];
