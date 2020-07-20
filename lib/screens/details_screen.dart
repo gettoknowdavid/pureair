@@ -286,15 +286,20 @@ class _DetailsScreenState extends State<DetailsScreen> {
 
   List<Widget> get _buildList {
     return [
-      Column(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: <Widget>[
-          _LocationAndTip(
-            size: size,
-            model: widget.model,
-          ),
-          _buildMainContainer,
-        ],
+      Container(
+        color: Color(0xFFF2F2F2),
+          // padding: EdgeInsets.symmetric(horizontal: 12),
+
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: <Widget>[
+            _LocationAndTip(
+              size: size,
+              model: widget.model,
+            ),
+            _buildMainContainer,
+          ],
+        ),
       )
     ];
   }
@@ -304,10 +309,21 @@ class _DetailsScreenState extends State<DetailsScreen> {
     return MediaQuery(
       data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
       child: Scaffold(
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         appBar: _buildAppBar,
-        body: ListView(
-          shrinkWrap: true,
-          children: _buildList,
+        body: Container(
+          height: size.height,
+          width: size.width,
+
+          padding: EdgeInsets.symmetric(horizontal: 12, vertical: 20),
+          color: Theme.of(context).scaffoldBackgroundColor,
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(60),
+            child: ListView(
+              shrinkWrap: true,
+              children: _buildList,
+            ),
+          ),
         ),
       ),
     );

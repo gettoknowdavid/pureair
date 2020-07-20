@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:pureair/screens/details_screen.dart';
 import 'package:pureair/src/core/aqi_helper.dart';
 import 'package:pureair/src/model/aqi.dart';
+import 'package:pureair/src/model/pureair.dart';
 import 'package:pureair/widgets/animated_wave.dart';
 import 'package:pureair/widgets/date_formatter.dart';
 import 'package:pureair/widgets/fade_page_route.dart';
@@ -12,12 +13,12 @@ import 'package:pureair/widgets/fade_page_route.dart';
 class AqiWidget extends StatefulWidget {
   final double width;
   final double height;
-  final Aqi model;
+  final PureAir pureAir;
   final AqiHelper helper;
 
   const AqiWidget({
     Key key,
-    @required this.model,
+    @required this.pureAir,
     @required this.width,
     @required this.height,
     this.helper,
@@ -45,7 +46,7 @@ class _AqiWidgetState extends State<AqiWidget> {
       alignment: Alignment.center,
       padding: EdgeInsets.all(5),
       child: AutoSizeText(
-        '${widget.model.data.aqi}',
+        '${widget.pureAir.model.data.aqi}',
         maxLines: 1,
         softWrap: false,
         style: textTheme.headline1.copyWith(
@@ -87,7 +88,7 @@ class _AqiWidgetState extends State<AqiWidget> {
           Container(
             alignment: Alignment.center,
             child: AutoSizeText(
-              '${widget.model.data.city.name}'.toUpperCase(),
+              '${widget.pureAir.model.data.city.name}'.toUpperCase(),
               maxLines: 2,
               softWrap: true,
               textAlign: TextAlign.center,
@@ -106,12 +107,12 @@ class _AqiWidgetState extends State<AqiWidget> {
   }
 
   Widget get _buildDate {
-    AqiHelper helper = AqiHelper(widget.model);
+    AqiHelper helper = AqiHelper(widget.pureAir.model);
 
     return Container(
       padding: EdgeInsets.only(bottom: 10),
       child: AutoSizeText(
-        formattedDate,
+        dateFormat(DateTime.parse(widget.pureAir.timeStamp)),
         style: TextStyle(
           color: helper.color.withOpacity(0.85),
           fontSize: 20,
@@ -158,16 +159,16 @@ class _AqiWidgetState extends State<AqiWidget> {
 
   @override
   Widget build(BuildContext context) {
-    AqiHelper helper = AqiHelper(widget.model);
+    AqiHelper helper = AqiHelper(widget.pureAir.model);
 
     return GestureDetector(
       onTap: () {
         Navigator.of(context).push(
-          FadePageRoute(widget: DetailsScreen(model: widget.model)),
+          FadePageRoute(widget: DetailsScreen(model: widget.pureAir.model)),
         );
       },
       child: Container(
-        margin: EdgeInsets.symmetric(horizontal: 26),
+        margin: EdgeInsets.symmetric(horizontal: 16),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(60),
           boxShadow: [

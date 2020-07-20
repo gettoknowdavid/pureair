@@ -48,8 +48,7 @@ class _SearchScreenState extends State<SearchScreen> {
 
     return Scaffold(
       key: _scaffoldKey,
-        backgroundColor: Color(0xFFF2F2F2),
-     
+      backgroundColor: Color(0xFFF2F2F2),
       body: BlocBuilder<SearchBloc, SearchState>(
         builder: (context, state) {
           if (state is SearchLoaded) {
@@ -68,13 +67,15 @@ class _SearchScreenState extends State<SearchScreen> {
               height: size.height,
               width: size.width,
               // color: colorScheme.background,
+              margin: EdgeInsets.only(top: 26),
+
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   SearchTaxtField(
                     scaffoldKey: _scaffoldKey,
                     size: size,
-                    margin: EdgeInsets.symmetric(horizontal: 26),
+                    margin: EdgeInsets.symmetric(horizontal: 16),
                     onPressed: () {
                       context
                           .bloc<SearchBloc>()
@@ -84,7 +85,7 @@ class _SearchScreenState extends State<SearchScreen> {
                   ),
                   SizedBox(height: 30),
                   Container(
-                    padding: EdgeInsets.fromLTRB(26, 6, 26, 16),
+                    padding: EdgeInsets.fromLTRB(16, 6, 16, 16),
                     child: Row(
                       children: <Widget>[
                         Container(
@@ -115,7 +116,7 @@ class _SearchScreenState extends State<SearchScreen> {
                   ),
                   Expanded(
                     child: ListView.builder(
-                      padding: EdgeInsets.fromLTRB(26, 0, 26, 26),
+                      padding: EdgeInsets.fromLTRB(16, 0, 16, 26),
                       itemCount: state.searchAqi.data.length,
                       itemBuilder: (context, index) {
                         final data = state.searchAqi.data[index];
@@ -138,13 +139,13 @@ class _SearchScreenState extends State<SearchScreen> {
             return Container(
               height: size.height,
               width: size.width,
-              color: colorScheme.background,
+              color: Color(0xFFF2F2F2),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   SizedBox(height: 30),
                   Container(
-                    padding: EdgeInsets.symmetric(horizontal: 26),
+                    padding: EdgeInsets.symmetric(horizontal: 16),
                     child: Text(
                       'Search your \nfavourite cities',
                       style: textTheme.headline3,
@@ -154,7 +155,7 @@ class _SearchScreenState extends State<SearchScreen> {
                   SearchTaxtField(
                     scaffoldKey: _scaffoldKey,
                     size: size,
-                    margin: EdgeInsets.symmetric(horizontal: 26),
+                    margin: EdgeInsets.symmetric(horizontal: 16),
                     onPressed: () {},
                     textController: textController,
                   ),

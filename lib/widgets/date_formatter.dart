@@ -18,3 +18,14 @@ String dateFormatter(DateTime dateTime, BuildContext context) {
   String finalDateTime = '$formattedDate at ${timeOfDay.format(context)}';
   return finalDateTime;
 }
+
+
+String dateFormat(DateTime dateTime) {
+  DateTime _dateTime = DateTime.now();
+  String _weekDay = DateFormat('EEE').format(_dateTime);
+  String _day = DateFormat('d').format(_dateTime);
+  String _month = DateFormat('MMMM').format(_dateTime);
+  String formattedDate = '$_weekDay' + '—' + '$_day' + ' $_month';
+
+  return formattedDate;
+}

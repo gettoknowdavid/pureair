@@ -57,8 +57,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
           width: size.width,
           alignment: Alignment.center,
           child: ListView(
-    padding: EdgeInsets.symmetric(horizontal: 26),
+    padding: EdgeInsets.symmetric(horizontal: 16),
     children: <Widget>[
+      SizedBox(height: 20),
       _CustomListTile(
         header: 'Account',
         content: <Widget>[
@@ -143,7 +144,7 @@ class _CustomListTile extends StatelessWidget {
       padding: EdgeInsets.only(bottom: 50),
       child: StickyHeader(
         header: Container(
-          color: theme.scaffoldBackgroundColor,
+          // color: theme.scaffoldBackgroundColor,
           alignment: Alignment.centerLeft,
           width: width,
           height: width * 0.13,

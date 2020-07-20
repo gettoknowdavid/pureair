@@ -157,10 +157,10 @@ class _HomeScreenState extends State<HomeScreen> {
         child: ListView(
           shrinkWrap: true,
           primary: false,
-          padding: EdgeInsets.symmetric(vertical: 40),
+          padding: EdgeInsets.symmetric(vertical: 16),
           children: <Widget>[
             AqiWidget(
-              model: state.pureAir.model,
+              pureAir: state.pureAir,
               helper: helper,
               height: aqiWidgetHeight,
               width: aqiWidgetWidth,
