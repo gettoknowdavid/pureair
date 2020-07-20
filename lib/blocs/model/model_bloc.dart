@@ -40,11 +40,13 @@ class ModelBloc extends Bloc<ModelEvent, ModelState> {
 
   Stream<ModelState> _mapRefreshToState() async* {
     try {
-      Aqi model = await repository.fetchModel;
-      PureAir pureAir = PureAir(model: model);
+      PureAir pureAir = await repository.fetchPureAir;
+      // PureAir pureAir = PureAir(model: model);
 
       yield ModelLoaded(pureAir);
       await repository.savePureAir(pureAir);
+
+      print(pureAir.timeStamp);
     } catch (_) {
       yield ModelNotLoaded();
     }

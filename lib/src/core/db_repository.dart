@@ -32,6 +32,19 @@ class DbRepository extends Repository {
   }
 
   @override
+  Future<PureAir> get fetchPureAir async {
+    var source = jsonEncode(await dao.fetchAqi());
+    var json = jsonDecode(source);
+    var model = Aqi.fromJson(json);
+
+    final pureAir =
+        PureAir(model: model, timeStamp: model.data.time.s.toIso8601String());
+    var toString = jsonEncode(pureAir);
+    var newJson = jsonDecode(toString);
+    return PureAir.fromJson(newJson);
+  }
+
+  @override
   Future<Aqi> get loadModel async {
     final record = await store.record(1).get(await _database);
 
@@ -65,7 +78,6 @@ class DbRepository extends Repository {
 
     var source = jsonEncode(await dao.fetchAqi());
 
-
     return snapshot.map((snapshot) {
       final pureAir = PureAir.fromJson(snapshot.value);
       final timeStamp = DateTime.now().toIso8601String();
@@ -81,8 +93,6 @@ class DbRepository extends Repository {
     }).last;
     // final record = await store.record(key)
   }
-
-
 
   @override
   Future savePureAir(PureAir pureAir) async {

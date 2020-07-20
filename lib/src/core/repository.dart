@@ -5,6 +5,7 @@ import 'package:pureair/src/model/search_model/search_aqi.dart';
 
 abstract class Repository {
   Future<Aqi> get fetchModel;
+  Future<PureAir> get fetchPureAir;
 
   Future<SearchAqi> searchModel(String city);
 
