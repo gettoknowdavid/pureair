@@ -13,9 +13,8 @@ class SettingsScreen extends StatefulWidget {
 
 class _SettingsScreenState extends State<SettingsScreen> {
   TextTheme get textTheme => Theme.of(context).textTheme;
+  ColorScheme get colorScheme => Theme.of(context).colorScheme;
   Size get size => MediaQuery.of(context).size;
-
-  final trailingIcon = Icon(Icons.chevron_right, size: 30);
 
   final contentPadding = EdgeInsets.zero;
 
@@ -23,6 +22,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Widget build(BuildContext context) {
     Widget _buildListTile(String title,
         {bool enabled = false, Function() onTap}) {
+      final trailingIcon = Icon(
+        Icons.chevron_right,
+        size: 30,
+        color: enabled
+            ? colorScheme.secondary
+            : colorScheme.secondary.withOpacity(0.3),
+      );
       return Container(
         padding: const EdgeInsets.only(bottom: 8.0),
         child: ListTile(
@@ -31,8 +37,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
             style: textTheme.headline5.copyWith(
               fontWeight: FontWeight.w600,
               color: enabled
-                  ? textTheme.headline6.color
-                  : textTheme.headline6.color.withOpacity(0.3),
+                  ? colorScheme.onBackground
+                  : colorScheme.onBackground.withOpacity(0.3),
             ),
           ),
           enabled: enabled ?? false,
@@ -44,67 +50,68 @@ class _SettingsScreenState extends State<SettingsScreen> {
     }
 
     return Scaffold(
-      appBar: PureAirAppBar(title: 'SETTINGS'),
-      body: Container(
-        height: size.height,
-        width: size.width,
-        alignment: Alignment.center,
-        child: ListView(
-          padding: EdgeInsets.symmetric(horizontal: 26),
-          children: <Widget>[
-            _CustomListTile(
-              header: 'Account',
-              content: <Widget>[
-                _buildListTile('Create an account'),
-              ],
-            ),
-            _CustomListTile(
-              header: 'PREFERENCES',
-              content: <Widget>[
-                _buildListTile('Recommendations'),
-                _buildListTile('Units'),
-                _buildListTile('Sensitivity'),
-                _buildListTile(
-                  'Theme',
-                  enabled: true,
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => SelectTheme(),
-                      ),
-                    );
-                  },
-                ),
-              ],
-            ),
-            _CustomListTile(
-              header: 'NOTIFICATIONS',
-              content: [
-                _buildListTile('Favourite City'),
-                _buildListTile('Smart notifications'),
-                _buildListTile('Morning report'),
-                _buildListTile('Evening report'),
-              ],
-            ),
-            _CustomListTile(
-              header: 'Help',
-              content: <Widget>[
-                _buildListTile('FAQ'),
-                _buildListTile('Contact us'),
-              ],
-            ),
-            _CustomListTile(
-              header: 'LINKS',
-              content: [
-                _buildListTile('Shop'),
-                _buildListTile('Legal'),
-              ],
-            ),
-          ],
-        ),
+        backgroundColor: Color(0xFFF2F2F2),
+
+        body: Container(
+          height: size.height,
+          width: size.width,
+          alignment: Alignment.center,
+          child: ListView(
+    padding: EdgeInsets.symmetric(horizontal: 26),
+    children: <Widget>[
+      _CustomListTile(
+        header: 'Account',
+        content: <Widget>[
+          _buildListTile('Create an account'),
+        ],
       ),
-    );
+      _CustomListTile(
+        header: 'PREFERENCES',
+        content: <Widget>[
+          _buildListTile('Recommendations'),
+          _buildListTile('Units'),
+          _buildListTile('Sensitivity'),
+          _buildListTile(
+            'Theme',
+            enabled: true,
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => SelectTheme(),
+                ),
+              );
+            },
+          ),
+        ],
+      ),
+      _CustomListTile(
+        header: 'NOTIFICATIONS',
+        content: [
+          _buildListTile('Favourite City'),
+          _buildListTile('Smart notifications'),
+          _buildListTile('Morning report'),
+          _buildListTile('Evening report'),
+        ],
+      ),
+      _CustomListTile(
+        header: 'Help',
+        content: <Widget>[
+          _buildListTile('FAQ'),
+          _buildListTile('Contact us'),
+        ],
+      ),
+      _CustomListTile(
+        header: 'LINKS',
+        content: [
+          _buildListTile('Shop'),
+          _buildListTile('Legal'),
+        ],
+      ),
+    ],
+          ),
+        ),
+      );
   }
 }
 
@@ -158,6 +165,7 @@ class SelectTheme extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
+    final colorScheme = Theme.of(context).colorScheme;
     final listTilePadding = EdgeInsets.symmetric(
       vertical: 6,
     );
@@ -175,10 +183,16 @@ class SelectTheme extends StatelessWidget {
                 'Light Theme',
                 style: textTheme.headline5.copyWith(
                   fontWeight: FontWeight.w600,
+                  color: colorScheme.onBackground,
                 ),
               ),
               contentPadding: listTilePadding,
-              trailing: isSelected ? Icon(Icons.check) : null,
+              trailing: isSelected
+                  ? Icon(
+                      Icons.check,
+                      color: colorScheme.secondary,
+                    )
+                  : null,
               onTap: () {
                 context.bloc<ThemeBloc>().add(
                       ChangeTheme(ThemeEnum.lightTheme),
@@ -191,6 +205,7 @@ class SelectTheme extends StatelessWidget {
                 'Dark Theme',
                 style: textTheme.headline5.copyWith(
                   fontWeight: FontWeight.w600,
+                  color: colorScheme.onBackground,
                 ),
               ),
               contentPadding: listTilePadding,
@@ -202,7 +217,6 @@ class SelectTheme extends StatelessWidget {
                   );
               },
             ),
-            Divider(),
           ],
         ),
       ),

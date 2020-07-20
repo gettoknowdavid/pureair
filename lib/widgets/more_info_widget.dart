@@ -15,6 +15,7 @@ class MoreInfoWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
+    final colorScheme = Theme.of(context).colorScheme;
     return Container(
       width: size.width,
       margin: EdgeInsets.symmetric(vertical: 12),
@@ -27,7 +28,7 @@ class MoreInfoWidget extends StatelessWidget {
             child: Text(
               title,
               style: textTheme.subtitle1.copyWith(
-                color: textTheme.headline6.color.withOpacity(0.7),
+                color: colorScheme.onBackground.withOpacity(0.7),
               ),
             ),
           ),
@@ -40,7 +41,8 @@ class MoreInfoWidget extends StatelessWidget {
               overflow: TextOverflow.ellipsis,
               textAlign: TextAlign.left,
               style: textTheme.headline6.copyWith(
-                fontWeight: FontWeight.w800,
+                fontWeight: FontWeight.w700,
+                color: colorScheme.onBackground,
               ),
             ),
           ),

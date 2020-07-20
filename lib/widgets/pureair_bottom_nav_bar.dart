@@ -23,11 +23,11 @@ class PureAirBottomNavBar extends StatelessWidget {
     final colorScheme = Theme.of(context).colorScheme;
 
     return Container(
-      height: size.shortestSide * 0.17,
+      height: size.shortestSide * 0.16,
       width: size.width,
       alignment: Alignment.center,
       decoration: BoxDecoration(
-        color: backgroundColor ?? colorScheme.surface,
+        color: backgroundColor ?? colorScheme.background,
         boxShadow: [
           if (showElevation)
             const BoxShadow(
@@ -88,10 +88,9 @@ class AnimatedItem extends StatelessWidget {
           children: <Widget>[
             IconTheme(
               data: IconThemeData(
-                  size: 30,
-                  color: !isSelected
-                      ? Theme.of(context).iconTheme.color.withOpacity(0.4)
-                      : Theme.of(context).iconTheme.color),
+                size: 30,
+                color: !isSelected ? item.inactiveColor : item.activeColor,
+              ),
               child: item.icon,
             ),
           ],

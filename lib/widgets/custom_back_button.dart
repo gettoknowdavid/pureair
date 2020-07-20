@@ -15,7 +15,7 @@ class PureAirBackButton extends StatelessWidget {
       icon: ImageIcon(
         AssetImage('images/arrows.png'),
         size: size ?? theme.iconTheme.size,
-        color: color ?? theme.iconTheme.color,
+        color: color ?? theme.colorScheme.secondary,
       ),
     );
   }

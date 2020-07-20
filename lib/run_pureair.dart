@@ -5,6 +5,7 @@ import 'package:pureair/app.dart';
 import 'package:pureair/blocs/model/model_bloc.dart';
 import 'package:pureair/blocs/pureair_observer.dart';
 import 'package:pureair/blocs/search/search_bloc.dart';
+import 'package:pureair/blocs/search_details/search_details_bloc.dart';
 import 'package:pureair/blocs/tabs/tabs_bloc.dart';
 import 'package:pureair/src/core/repository.dart';
 
@@ -25,7 +26,11 @@ void runPureAir(Repository repository) async {
             return SearchBloc(repository);
           },
         ),
-        
+        BlocProvider(
+          create: (context) {
+            return SearchDetailsBloc();
+          },
+        ),
       ],
       child: App(),
     ),

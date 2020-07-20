@@ -9,12 +9,12 @@ abstract class ModelState extends Equatable {
 class ModelLoading extends ModelState {}
 
 class ModelLoaded extends ModelState {
-  final Aqi model;
+  final PureAir pureAir;
 
-  ModelLoaded(this.model);
+  ModelLoaded(this.pureAir);
 
   @override
-  List<Object> get props => [model];
+  List<Object> get props => [pureAir];
 }
 
 class ModelNotLoaded extends ModelState {}

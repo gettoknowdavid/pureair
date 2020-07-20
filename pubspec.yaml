@@ -44,6 +44,11 @@ dependencies:
   sliding_up_panel: ^1.0.2
   flutter_launcher_icons: ^0.7.5
   autocomplete_textfield: ^1.7.3
+  fl_chart: ^0.10.1
+  google_maps_flutter: ^0.5.28+1
+  flutter_google_places: ^0.2.5
+  location: ^3.0.2
+  latlong: ^0.6.1
   geolocator:
   intl_translation:
   json_annotation:
@@ -102,6 +107,9 @@ flutter:
     - images/drop.png
     - images/umbrella.png
     - images/wind.png
+    - images/park.png
+    - images/heart.png
+    - images/cycling.png
 
 
   # An image asset can refer to one or more resolution-specific "variants", see

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pureair/src/core/aqi_helper.dart';
 import 'package:pureair/src/model/aqi.dart';
 
 class PollutantWidget extends StatelessWidget {
@@ -6,11 +7,15 @@ class PollutantWidget extends StatelessWidget {
     Key key,
     @required this.size,
     @required this.title,
+    this.backgroundColor,
+    this.textColor,
     this.value,
   }) : super(key: key);
 
   final Size size;
   final String title;
+  final Color backgroundColor;
+  final Color textColor;
   final dynamic value;
 
   @override
@@ -23,28 +28,45 @@ class PollutantWidget extends StatelessWidget {
     return Container(
       height: containerSize.roundToDouble(),
       width: containerSize.roundToDouble(),
-      padding: EdgeInsets.symmetric(vertical: 8),
+      padding: EdgeInsets.symmetric(vertical: 12),
       alignment: Alignment.center,
       decoration: BoxDecoration(
-        color: colorScheme.surface,
-        borderRadius: BorderRadius.circular(12),
+        color: backgroundColor ?? colorScheme.background,
+        borderRadius: BorderRadius.circular(16),
+        border: value.toString().contains('-')
+            ? Border.all(color: Colors.transparent)
+            : Border.all(
+                color: colorScheme.onBackground.withOpacity(0.1),
+              ),
+        boxShadow: [
+          if (!value.toString().contains('-'))
+            BoxShadow(
+              color: colorScheme.onBackground.withOpacity(0.2),
+              blurRadius: 12,
+            ),
+        ],
       ),
       child: Column(
         children: <Widget>[
           Text(
             title.toUpperCase(),
-            style: textTheme.bodyText1.copyWith(
-              color: textTheme.overline.color.withOpacity(0.7),
+            style: textTheme.bodyText2.copyWith(
+              color: textColor != null
+                  ? textColor.withOpacity(0.6)
+                  : textTheme.overline.color.withOpacity(0.6),
               // fontSize: 16,
-              fontWeight: FontWeight.w600,
+              fontWeight: FontWeight.w700,
               letterSpacing: 2,
             ),
           ),
           Spacer(),
           Text(
             value.toString(),
-            style: textTheme.headline6.copyWith(
-              // fontSize: 16,
+            maxLines: 1,
+            softWrap: true,
+            overflow: TextOverflow.fade,
+            style: textTheme.headline5.copyWith(
+              color: textColor ?? colorScheme.onBackground,
               fontWeight: FontWeight.w800,
             ),
           ),
@@ -67,35 +89,54 @@ class PollutantList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final iaqi = model.data.iaqi;
+    AqiHelper helper = AqiHelper(model);
 
     return Wrap(
       runSpacing: 20,
       spacing: ((size.width - 56) - ((size.shortestSide * 0.159) * 4)) / 2.9,
       children: <Widget>[
         PollutantWidget(
-            size: size,
-            title: 'co',
-            value: iaqi.co == null ? '-' : '${iaqi.co.v.round()}'),
+          size: size,
+          title: 'co',
+          value: iaqi.co == null ? '-' : '${iaqi.co.v.round()}',
+          backgroundColor: helper.coPollutantBgColor,
+          textColor: helper.coTextColor,
+        ),
         PollutantWidget(
-            size: size,
-            title: 'no\u2082',
-            value: iaqi.no2 == null ? '-' : '${iaqi.no2.v.round()}'),
+          size: size,
+          title: 'no\u2082',
+          value: iaqi.no2 == null ? '-' : '${iaqi.no2.v.round()}',
+          backgroundColor: helper.no2PollutantBgColor,
+          textColor: helper.no2TextColor,
+        ),
         PollutantWidget(
-            size: size,
-            title: '0\u2083',
-            value: iaqi.o3 == null ? '-' : '${iaqi.o3.v.round()}'),
+          size: size,
+          title: 'O\u2083',
+          value: iaqi.o3 == null ? '-' : '${iaqi.o3.v.round()}',
+          backgroundColor: helper.o3PollutantBgColor,
+          textColor: helper.o3TextColor,
+        ),
         PollutantWidget(
-            size: size,
-            title: 'pm10',
-            value: iaqi.pm10 == null ? '-' : '${iaqi.pm10.v.round()}'),
+          size: size,
+          title: 'pm10',
+          value: iaqi.pm10 == null ? '-' : '${iaqi.pm10.v.round()}',
+          backgroundColor: helper.pm10PollutantBgColor,
+          textColor: helper.pm10TextColor,
+        ),
         PollutantWidget(
-            size: size,
-            title: 'pm2.5',
-            value: iaqi.pm25 == null ? '-' : '${iaqi.pm25.v.round()}'),
+          size: size,
+          title: 'pm2.5',
+          value: iaqi.pm25 == null ? '-' : '${iaqi.pm25.v.round()}',
+          backgroundColor: helper.pm25PollutantBgColor,
+          textColor: helper.pm25TextColor,
+        ),
         PollutantWidget(
-            size: size,
-            title: 'so\u2082',
-            value: iaqi.so2 == null ? '-' : '${iaqi.so2.v.round()}'),
+          size: size,
+          title: 'so\u2082',
+          value: iaqi.so2 == null ? '-' : '${iaqi.so2.v.round()}',
+          backgroundColor: helper.so2PollutantBgColor,
+          textColor: helper.so2TextColor,
+        ),
       ],
     );
   }

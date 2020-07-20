@@ -19,20 +19,23 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
     SearchEvent event,
   ) async* {
     if (event is SearchCity) {
-      final searchAqi = await repository.searchModel(event.city);
-      yield SearchLoaded(searchAqi);
-    } else if (event is RecentCity) {
-      final s = await _getRecentValues(event.city, event.uid);
-      print('${s.station.name}, ${s.station.country}, ${s.uid}: ${s.aqi}');
+      try {
+        final searchAqi = await repository.searchModel(event.city);
+        yield SearchLoaded(searchAqi);
+      } catch (_) {
+        yield SearchNotLoaded();
+      }
+    } else if (event is ClearSearch) {
+      yield SearchLoading();
     }
   }
 
-  Future<SearchData> _getRecentValues(String city, int uid) async {
-    final SearchAqi search = await repository.searchModel(city);
+  // Future<SearchData> _getRecentValues(String city, int uid) async {
+  //   final SearchAqi search = await repository.searchModel(city);
 
-    final SearchData s =
-        search.data.firstWhere((element) => element.uid == uid);
-    print(s);
-    return s;
-  }
+  //   final SearchData s =
+  //       search.data.firstWhere((element) => element.uid == uid);
+  //   print(s);
+  //   return s;
+  // }
 }

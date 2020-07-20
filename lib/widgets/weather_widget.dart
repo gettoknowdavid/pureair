@@ -33,26 +33,35 @@ class WeatherWidget extends StatelessWidget {
       decoration: BoxDecoration(
         color: colorScheme.surface,
         borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: colorScheme.background.withOpacity(0.1),
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: colorScheme.onBackground.withOpacity(0.2),
+            blurRadius: 14,
+          ),
+        ],
       ),
       child: Column(
         children: <Widget>[
           ImageIcon(
             AssetImage(icon),
-            color: theme.iconTheme.color.withOpacity(0.8),
+            color: colorScheme.onBackground.withOpacity(0.7),
           ),
           Spacer(),
           AutoSizeText(
             value.toString(),
             style: textTheme.headline5.copyWith(
-              // fontSize: 16,
               fontWeight: FontWeight.w800,
+              color: colorScheme.onBackground,
             ),
           ),
           Spacer(),
           AutoSizeText(
             unit,
             style: textTheme.headline6.copyWith(
-              color: textTheme.headline6.color.withOpacity(0.7),
+              color: colorScheme.onBackground.withOpacity(0.7),
               fontSize: 16,
               fontWeight: FontWeight.w600,
               letterSpacing: 2,

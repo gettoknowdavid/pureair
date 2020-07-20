@@ -13,12 +13,14 @@ class AqiWidget extends StatefulWidget {
   final double width;
   final double height;
   final Aqi model;
+  final AqiHelper helper;
 
   const AqiWidget({
     Key key,
     @required this.model,
     @required this.width,
     @required this.height,
+    this.helper,
   }) : super(key: key);
   @override
   _AqiWidgetState createState() => _AqiWidgetState();
@@ -37,10 +39,8 @@ class _AqiWidgetState extends State<AqiWidget> {
   }
 
   Widget get _buildAqiValue {
-    AqiHelper helper = AqiHelper(widget.model);
-
     return Container(
-      height: widget.width * 0.8,
+      height: widget.width * 0.75,
       width: widget.width,
       alignment: Alignment.center,
       padding: EdgeInsets.all(5),
@@ -51,22 +51,20 @@ class _AqiWidgetState extends State<AqiWidget> {
         style: textTheme.headline1.copyWith(
           fontSize: 300,
           fontWeight: FontWeight.w900,
-          color: helper.color.withOpacity(0.85),
+          color: widget.helper.color,
         ),
       ),
     );
   }
 
   Widget get _buildHealthTip {
-    AqiHelper helper = AqiHelper(widget.model);
-
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 36.0),
       child: Text(
-        '${helper.healthConcern}',
+        '${widget.helper.healthConcern}',
         textAlign: TextAlign.center,
         style: textTheme.headline5.copyWith(
-          color: helper.color,
+          color: widget.helper.color,
           fontSize: 26,
           fontWeight: FontWeight.w500,
         ),
@@ -75,29 +73,31 @@ class _AqiWidgetState extends State<AqiWidget> {
   }
 
   Widget get _buildLocation {
-    AqiHelper helper = AqiHelper(widget.model);
-
     return Padding(
-      padding: EdgeInsets.fromLTRB(30, 10, 30, 0),
-      child: Row(
+      padding: EdgeInsets.fromLTRB(20, 5, 20, 5),
+      child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           ImageIcon(
             AssetImage('images/location.png'),
             size: 18,
-            color: helper.color,
+            color: widget.helper.color,
           ),
-          SizedBox(width: 6),
-          AutoSizeText(
-            '${widget.model.data.city.name}'.toUpperCase(),
-            maxLines: 1,
-            softWrap: true,
-            overflow: TextOverflow.ellipsis,
-            style: TextStyle(
-              fontSize: 22,
-              color: helper.color,
-              letterSpacing: 1.0,
-              fontWeight: FontWeight.w600,
+          SizedBox(height: 10),
+          Container(
+            alignment: Alignment.center,
+            child: AutoSizeText(
+              '${widget.model.data.city.name}'.toUpperCase(),
+              maxLines: 2,
+              softWrap: true,
+              textAlign: TextAlign.center,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                fontSize: 22,
+                color: widget.helper.color,
+                letterSpacing: 1.0,
+                fontWeight: FontWeight.w600,
+              ),
             ),
           ),
         ],
@@ -108,13 +108,16 @@ class _AqiWidgetState extends State<AqiWidget> {
   Widget get _buildDate {
     AqiHelper helper = AqiHelper(widget.model);
 
-    return AutoSizeText(
-      formattedDate,
-      style: TextStyle(
-        color: helper.color.withOpacity(0.85),
-        fontSize: 20,
-        letterSpacing: 1.0,
-        fontWeight: FontWeight.w600,
+    return Container(
+      padding: EdgeInsets.only(bottom: 10),
+      child: AutoSizeText(
+        formattedDate,
+        style: TextStyle(
+          color: helper.color.withOpacity(0.85),
+          fontSize: 20,
+          letterSpacing: 1.0,
+          fontWeight: FontWeight.w600,
+        ),
       ),
     );
   }
@@ -130,7 +133,7 @@ class _AqiWidgetState extends State<AqiWidget> {
         )),
         Column(
           children: <Widget>[
-            SizedBox(height: 30),
+            SizedBox(height: 20),
             _buildAqiValue,
             _buildHealthTip,
             Spacer(),

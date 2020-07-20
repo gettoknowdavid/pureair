@@ -15,15 +15,25 @@ class DetailsWidget extends StatelessWidget {
     @required this.size,
     @required this.title,
     this.content,
+    this.addDivider = true,
   }) : super(key: key);
 
   final Size size;
   final String title;
   final Widget content;
+  final bool addDivider;
 
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
+    final colorScheme = Theme.of(context).colorScheme;
+
+    Widget divider() {
+      if (addDivider)
+        return Divider();
+      else
+        return Container();
+    }
 
     return Container(
       child: Column(
@@ -32,7 +42,7 @@ class DetailsWidget extends StatelessWidget {
           Text(
             title.toUpperCase(),
             style: textTheme.headline6.copyWith(
-              color: textTheme.headline6.color.withOpacity(0.8),
+              color: colorScheme.onBackground.withOpacity(0.7),
               fontWeight: FontWeight.w800,
               letterSpacing: 2,
             ),
@@ -40,7 +50,7 @@ class DetailsWidget extends StatelessWidget {
           SizedBox(height: 26),
           content,
           SizedBox(height: 26),
-          Divider(),
+          divider(),
           SizedBox(height: 40),
         ],
       ),
@@ -61,6 +71,33 @@ class _LocationAndTip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
+    final colorScheme = Theme.of(context).colorScheme;
+
+    Text _buildHealthConcern(TextTheme textTheme) {
+      final helper = AqiHelper(model);
+
+      return Text(
+        helper.healthConcern,
+        style: textTheme.headline5.copyWith(
+            fontSize: 30,
+            fontWeight: FontWeight.w700,
+            color: colorScheme.onBackground),
+      );
+    }
+
+    Text _buidLocation(TextTheme textTheme) {
+      return Text(
+        '${model.data.city.name}'.toUpperCase(),
+        maxLines: 1,
+        softWrap: true,
+        overflow: TextOverflow.ellipsis,
+        style: textTheme.headline6.copyWith(
+          letterSpacing: 3,
+          fontWeight: FontWeight.w600,
+          color: colorScheme.onBackground.withOpacity(0.8),
+        ),
+      );
+    }
 
     return Container(
       width: size.width,
@@ -73,28 +110,6 @@ class _LocationAndTip extends StatelessWidget {
           SizedBox(height: 12),
           _buildHealthConcern(textTheme),
         ],
-      ),
-    );
-  }
-
-  Text _buildHealthConcern(TextTheme textTheme) {
-    final helper = AqiHelper(model);
-
-    return Text(
-      helper.healthConcern,
-      style: textTheme.headline5.copyWith(
-        fontSize: 30,
-        fontWeight: FontWeight.w700,
-      ),
-    );
-  }
-
-  Text _buidLocation(TextTheme textTheme) {
-    return Text(
-      '${model.data.city.name}'.toUpperCase(),
-      style: textTheme.headline6.copyWith(
-        letterSpacing: 3,
-        fontWeight: FontWeight.w600,
       ),
     );
   }
@@ -124,19 +139,30 @@ class _DetailsScreenState extends State<DetailsScreen> {
 
   Widget get _buildAqiValue {
     return Container(
-      height: size.width * 0.27,
-      width: size.width,
+      height: size.width * 0.26,
+      width: size.width * 0.26,
       alignment: Alignment.center,
-      padding: EdgeInsets.zero,
-      margin: EdgeInsets.only(bottom: 26),
+      padding: EdgeInsets.all(16),
+      // margin: EdgeInsets.only(bottom: 26),
+      decoration: BoxDecoration(
+        color: helper.backgroundColor,
+        borderRadius: BorderRadius.circular(30),
+        boxShadow: [
+          BoxShadow(
+            color: colorScheme.onBackground.withOpacity(0.3),
+            blurRadius: 20,
+          ),
+        ],
+      ),
       child: AutoSizeText(
         '${widget.model.data.aqi}',
         maxLines: 1,
         softWrap: false,
+        textAlign: TextAlign.center,
         style: textTheme.headline1.copyWith(
-          fontSize: 300,
+          // fontSize: 250,
           fontWeight: FontWeight.w900,
-          color: helper.backgroundColor,
+          color: helper.color,
         ),
       ),
     );
@@ -144,6 +170,7 @@ class _DetailsScreenState extends State<DetailsScreen> {
 
   DetailsWidget get _buildMoreInfoList {
     return DetailsWidget(
+      addDivider: false,
       size: size,
       title: 'MORE INFO',
       content: MoreInfoList(
@@ -184,16 +211,70 @@ class _DetailsScreenState extends State<DetailsScreen> {
   }
 
   Widget get _buildMainContainer {
+    final dominantpol = widget.model.data.dominentpol.toUpperCase();
     return Container(
       width: size.width,
       padding: EdgeInsets.all(26),
-      color: Theme.of(context).brightness == Brightness.light
-          ? Colors.grey[200]
-          : colorScheme.background,
+      decoration: BoxDecoration(
+        color: colorScheme.background,
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(60),
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: colorScheme.onBackground.withOpacity(0.1),
+            blurRadius: 50,
+            spreadRadius: 30,
+          ),
+        ],
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          _buildAqiValue,
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              _buildAqiValue,
+              Container(
+                height: 70,
+                width: 2,
+                margin: EdgeInsets.fromLTRB(12, 7, 12, 0),
+                decoration: BoxDecoration(
+                  color: colorScheme.onBackground.withOpacity(0.4),
+                  borderRadius: BorderRadius.circular(30),
+                ),
+              ),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: <Widget>[
+                    SizedBox(height: 5),
+                    Text(
+                      'DOMINANT',
+                      style: textTheme.subtitle1.copyWith(
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: 1.2,
+                        color: textTheme.subtitle1.color.withOpacity(0.7),
+                      ),
+                    ),
+                    SizedBox(height: 10),
+                    Text(
+                      '$dominantpol is dominant in the air. This can cause bronchitis. Wear a mask to stay safe.',
+                      softWrap: true,
+                      maxLines: 4,
+                      textAlign: TextAlign.start,
+                      style: textTheme.headline6.copyWith(
+                        fontWeight: FontWeight.w400,
+                        letterSpacing: 1.2,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: 40),
           _buildPollutantList,
           _buildRecommendations,
           _buildWeatherList,
@@ -212,12 +293,7 @@ class _DetailsScreenState extends State<DetailsScreen> {
             size: size,
             model: widget.model,
           ),
-          ClipRRect(
-            borderRadius: BorderRadius.vertical(
-              top: Radius.circular(60),
-            ),
-            child: _buildMainContainer,
-          ),
+          _buildMainContainer,
         ],
       )
     ];

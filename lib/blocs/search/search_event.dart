@@ -16,7 +16,8 @@ class SearchCity extends SearchEvent {
   List<Object> get props => [city];
 }
 
-
+class ClearSearch extends SearchEvent {
+}
 
 class RecentCity extends SearchEvent {
   final String city;
