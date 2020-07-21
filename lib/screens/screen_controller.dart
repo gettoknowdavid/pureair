@@ -75,7 +75,6 @@ class _ScreenControllerState extends State<ScreenController> {
           final selectedIndex = Screen.values.indexOf(state.widget.screen);
           return Scaffold(
             key: _scaffoldKey,
-            // backgroundColor: Theme.of(context).scaffoldBackgroundColor,
             body: Container(
               height: size.height,
               width: size.width,
