@@ -16,27 +16,22 @@ class AirPurifierImage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
     return Container(
       height: height,
       width: width,
       margin: EdgeInsets.symmetric(horizontal: 20),
-      decoration: BoxDecoration(
+      child: Material(
         borderRadius: BorderRadius.circular(60),
-        boxShadow: [
-          const BoxShadow(
-            color: Colors.black12,
-            blurRadius: 20,
-          ),
-        ],
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(60),
-        child: Container(
-          color: Colors.white,
-          child: Image.asset(
-            'images/plume-labs-2.jpg',
-            fit: BoxFit.contain,
+        elevation: 20,
+        shadowColor: Colors.black26,
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(60),
+          child: Container(
+            color: Colors.white,
+            child: Image.asset(
+              'images/plume-labs-2.jpg',
+              fit: BoxFit.contain,
+            ),
           ),
         ),
       ),

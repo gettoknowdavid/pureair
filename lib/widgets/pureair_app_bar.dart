@@ -24,22 +24,15 @@ class PureAirAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
+    final colorScheme = Theme.of(context).colorScheme;
 
     final width = MediaQuery.of(context).size.width;
 
     return Container(
       height: prefferedSize.height,
       width: width,
-      decoration: BoxDecoration(
-        color: color,
-        // boxShadow: [
-        //   const BoxShadow(
-        //     color: Colors.black12,
-        //     blurRadius: 20,
-        //   ),
-        // ],
-      ),
-      padding: const EdgeInsets.symmetric(horizontal: 20.0),
+      color: color,
+      padding: EdgeInsets.symmetric(horizontal: 20.0),
       child: SafeArea(
         child: Stack(
           alignment: Alignment.center,
@@ -47,7 +40,11 @@ class PureAirAppBar extends StatelessWidget implements PreferredSizeWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
-                leading ?? ImageIcon(AssetImage('images/water.png')),
+                leading ??
+                    ImageIcon(
+                      AssetImage('images/water.png'),
+                      color: colorScheme.secondary,
+                    ),
                 actions ?? Container(),
               ],
             ),

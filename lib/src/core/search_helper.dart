@@ -18,7 +18,7 @@ class SearchHelper {
       color = AqiHelper.red;
     else if (aqi < 301)
       color = AqiHelper.purple;
-    else if (aqi < 501) color = AqiHelper.maroon;
+    else  color = AqiHelper.maroon;
     return color;
   }
 

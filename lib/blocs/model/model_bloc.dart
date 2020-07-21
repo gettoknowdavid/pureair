@@ -4,7 +4,6 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:pureair/src/core/repository.dart';
 import 'package:pureair/src/model/aqi.dart';
-import 'package:pureair/src/model/pureair.dart';
 
 part 'model_event.dart';
 part 'model_state.dart';

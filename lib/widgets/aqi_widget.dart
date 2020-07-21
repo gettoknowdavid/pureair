@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:pureair/screens/details_screen.dart';
 import 'package:pureair/src/core/aqi_helper.dart';
 import 'package:pureair/src/model/aqi.dart';
-import 'package:pureair/src/model/pureair.dart';
 import 'package:pureair/widgets/animated_wave.dart';
 import 'package:pureair/widgets/date_formatter.dart';
 import 'package:pureair/widgets/fade_page_route.dart';
@@ -52,7 +51,7 @@ class _AqiWidgetState extends State<AqiWidget> {
         minFontSize: 180,
         // maxFontSize: 300,
         style: textTheme.headline1.copyWith(
-          fontSize: 300,
+          fontSize: 250,
           fontWeight: FontWeight.w900,
           color: widget.helper.color,
         ),
@@ -77,15 +76,10 @@ class _AqiWidgetState extends State<AqiWidget> {
 
   Widget get _buildLocation {
     return Padding(
-      padding: EdgeInsets.fromLTRB(20, 0, 20, 5),
+      padding: EdgeInsets.fromLTRB(20, 0, 20, 6),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          ImageIcon(
-            AssetImage('images/location.png'),
-            size: 18,
-            color: widget.helper.color,
-          ),
           Container(
             alignment: Alignment.center,
             child: AutoSizeText(
@@ -95,11 +89,18 @@ class _AqiWidgetState extends State<AqiWidget> {
               textAlign: TextAlign.center,
               overflow: TextOverflow.ellipsis,
               style: TextStyle(
-                fontSize: 20,
+                fontSize: 22,
                 color: widget.helper.color,
                 letterSpacing: 1.0,
                 fontWeight: FontWeight.w600,
               ),
+            ),
+          ),
+          SizedBox(height: 4),
+          Text(
+            'SHOWING NEAREST LOCATION',
+            style: textTheme.subtitle2.copyWith(
+              color: widget.helper.color,
             ),
           ),
         ],
@@ -170,23 +171,19 @@ class _AqiWidgetState extends State<AqiWidget> {
       },
       child: Container(
         margin: EdgeInsets.symmetric(horizontal: 16),
-        decoration: BoxDecoration(
+        child: Material(
           borderRadius: BorderRadius.circular(60),
-          boxShadow: [
-            const BoxShadow(
-              color: Colors.black12,
-              blurRadius: 20,
+          elevation: 20,
+          shadowColor: Colors.black38,
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(60),
+            child: Container(
+              height: widget.height,
+              width: widget.width,
+              color: helper.backgroundColor,
+              alignment: Alignment.bottomCenter,
+              child: _buildStack,
             ),
-          ],
-        ),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(60),
-          child: Container(
-            height: widget.height,
-            width: widget.width,
-            color: helper.backgroundColor,
-            alignment: Alignment.bottomCenter,
-            child: _buildStack,
           ),
         ),
       ),

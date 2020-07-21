@@ -23,21 +23,15 @@ class ThemeBloc extends Bloc<ThemeEvent, ThemeState> {
       try {
         PureAirTheme pureAirTheme = await repository.loadTheme;
         yield ThemeLoaded(theme: pureAirThemes[pureAirTheme.theme]);
-        print(
-            'LOADDDDD______THEMMMMMMMMMMMMMMMMEEEEE::::::${pureAirTheme.theme}');
       } catch (_) {
         yield ThemeLoaded(theme: pureAirThemes[ThemeEnum.lightTheme]);
       }
     } else if (event is ChangeTheme) {
       PureAirTheme _theme = PureAirTheme(event.theme);
-      print(event.theme);
       yield ThemeLoaded(theme: pureAirThemes[event.theme]);
 
       await repository.clearThemeStore;
       await repository.saveTheme(_theme);
-
-      PureAirTheme theme2 = await repository.loadTheme;
-      print('THEMMMMMMMMMMMMMMMMEEEEE::::::${theme2.theme}');
     }
   }
 }

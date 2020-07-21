@@ -3,17 +3,11 @@ import 'package:autocomplete_textfield/autocomplete_textfield.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pureair/blocs/search/search_bloc.dart';
-import 'package:pureair/screens/search_details_screen.dart';
-import 'package:pureair/src/core/aqi_helper.dart';
 import 'package:pureair/src/core/db_repository.dart';
-import 'package:pureair/src/core/search_helper.dart';
-import 'package:pureair/src/model/aqi.dart';
-import 'package:pureair/src/model/search_model/search_aqi.dart';
 import 'package:pureair/src/model/search_model/search_data.dart';
-import 'package:pureair/widgets/date_formatter.dart';
-import 'package:pureair/widgets/fade_page_route.dart';
-import 'package:pureair/widgets/pureair_app_bar.dart';
+import 'package:pureair/widgets/loading_indicator.dart';
 import 'package:pureair/widgets/pureair_expansion_tile.dart';
+import 'package:pureair/widgets/search_result_item.dart';
 import 'package:pureair/widgets/search_textfield.dart';
 
 class SearchScreen extends StatefulWidget {
@@ -48,21 +42,10 @@ class _SearchScreenState extends State<SearchScreen> {
 
     return Scaffold(
       key: _scaffoldKey,
-      backgroundColor: Color(0xFFF2F2F2),
+      // backgroundColor: Color(0xFFF2F2F2),
       body: BlocBuilder<SearchBloc, SearchState>(
         builder: (context, state) {
           if (state is SearchLoaded) {
-            final totalNumberOfStations = state.searchAqi.data.length;
-            print(totalNumberOfStations);
-
-            final numberOfInactiveStations =
-                state.searchAqi.data.where((e) => e.aqi.contains('-')).length;
-            print(numberOfInactiveStations);
-
-            final numberOfActiveStations =
-                totalNumberOfStations - numberOfInactiveStations;
-            print(numberOfActiveStations);
-
             return Container(
               height: size.height,
               width: size.width,
@@ -72,96 +55,81 @@ class _SearchScreenState extends State<SearchScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
+                  SizedBox(height: 20),
                   SearchTaxtField(
                     scaffoldKey: _scaffoldKey,
                     size: size,
                     margin: EdgeInsets.symmetric(horizontal: 16),
-                    onPressed: () {
-                      context
-                          .bloc<SearchBloc>()
-                          .add(SearchCity(textController.text));
-                    },
                     textController: textController,
                   ),
                   SizedBox(height: 30),
-                  Container(
-                    padding: EdgeInsets.fromLTRB(16, 6, 16, 16),
-                    child: Row(
-                      children: <Widget>[
-                        Container(
+                  state.searchAqi.data.length < 1
+                      ? Container()
+                      : Container(
+                          padding: EdgeInsets.fromLTRB(16, 6, 16, 16),
+                          child: Row(
+                            children: <Widget>[
+                              Container(
+                                child: Text(
+                                  'Select a station...',
+                                  style: textTheme.headline5,
+                                ),
+                              ),
+                              Spacer(),
+                              Container(
+                                height: 32,
+                                width: 32,
+                                alignment: Alignment.center,
+                                decoration: BoxDecoration(
+                                  color: colorScheme.secondary,
+                                  borderRadius: BorderRadius.circular(30),
+                                ),
+                                child: AutoSizeText(
+                                  state.searchAqi.data.length.toString(),
+                                  style: textTheme.headline6.copyWith(
+                                    fontWeight: FontWeight.w800,
+                                    color: colorScheme.onSecondary,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                  state.searchAqi.data.length < 1
+                      ? Container(
+                          width: size.width,
+                          padding: EdgeInsets.all(26),
+                          alignment: Alignment.center,
                           child: Text(
-                            'Select a station...',
+                            'Sorry, there are no stations available in this location. \nTry again.',
+                            textAlign: TextAlign.center,
                             style: textTheme.headline5,
                           ),
-                        ),
-                        Spacer(),
-                        Container(
-                          height: 32,
-                          width: 32,
-                          alignment: Alignment.center,
-                          decoration: BoxDecoration(
-                            color: Colors.red,
-                            borderRadius: BorderRadius.circular(30),
-                          ),
-                          child: AutoSizeText(
-                            state.searchAqi.data.length.toString(),
-                            style: textTheme.headline6.copyWith(
-                              fontWeight: FontWeight.w800,
-                              color: colorScheme.background,
-                            ),
+                        )
+                      : Expanded(
+                          child: ListView.builder(
+                            padding: EdgeInsets.fromLTRB(16, 0, 16, 26),
+                            itemCount: state.searchAqi.data.length,
+                            itemBuilder: (context, index) {
+                              final data = state.searchAqi.data[index];
+
+                              return SearchResultItem(
+                                size: size,
+                                searchData: data,
+                              );
+                            },
                           ),
                         ),
-                      ],
-                    ),
-                  ),
-                  Expanded(
-                    child: ListView.builder(
-                      padding: EdgeInsets.fromLTRB(16, 0, 16, 26),
-                      itemCount: state.searchAqi.data.length,
-                      itemBuilder: (context, index) {
-                        final data = state.searchAqi.data[index];
-                        final selectedIndex =
-                            state.searchAqi.data.indexOf(data);
-
-                        bool ooo = index == selectedIndex;
-
-                        return SearchResultItem(
-                          size: size,
-                          searchData: data,
-                        );
-                      },
-                    ),
-                  ),
                 ],
               ),
             );
+          } else if (state is SearchLoading) {
+            return LoadingIndicator(size: size);
           } else {
-            return Container(
-              height: size.height,
-              width: size.width,
-              color: Color(0xFFF2F2F2),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  SizedBox(height: 30),
-                  Container(
-                    padding: EdgeInsets.symmetric(horizontal: 16),
-                    child: Text(
-                      'Search your \nfavourite cities',
-                      style: textTheme.headline3,
-                    ),
-                  ),
-                  SizedBox(height: 30),
-                  SearchTaxtField(
-                    scaffoldKey: _scaffoldKey,
-                    size: size,
-                    margin: EdgeInsets.symmetric(horizontal: 16),
-                    onPressed: () {},
-                    textController: textController,
-                  ),
-                  SizedBox(height: 30),
-                ],
-              ),
+            return SearchWidget(
+              size: size,
+              scaffoldKey: _scaffoldKey,
+              textController: textController,
             );
           }
         },
@@ -170,130 +138,46 @@ class _SearchScreenState extends State<SearchScreen> {
   }
 }
 
-class SearchResultItem extends StatefulWidget {
-  const SearchResultItem({
+class SearchWidget extends StatelessWidget {
+  const SearchWidget({
     Key key,
     @required this.size,
-    @required this.searchData,
-  }) : super(key: key);
+    @required GlobalKey<ScaffoldState> scaffoldKey,
+    @required this.textController,
+  })  : _scaffoldKey = scaffoldKey,
+        super(key: key);
 
   final Size size;
-  final SearchData searchData;
-
-  @override
-  _SearchResultItemState createState() => _SearchResultItemState();
-}
-
-class _SearchResultItemState extends State<SearchResultItem> {
-  bool _isExpanded = false;
+  final GlobalKey<ScaffoldState> _scaffoldKey;
+  final TextEditingController textController;
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final textTheme = theme.textTheme;
-    final colorScheme = theme.colorScheme;
-
-    final mainContainerHeight = widget.size.shortestSide * 0.2;
-    final mainContainerWidth = widget.size.width;
-    final mainRadius = mainContainerHeight * 0.2;
-
-    final aqiSize = mainContainerHeight * 0.6;
-    final radius = aqiSize * 0.24;
-
-    final aqi =
-        widget.searchData.aqi.contains('-') ? '0' : widget.searchData.aqi;
-    final SearchHelper helper = SearchHelper(int.parse(aqi));
-
-    return GestureDetector(
-      onTap: () => int.parse(aqi) == 0
-          ? null
-          : Navigator.push(
-              context,
-              FadePageRoute(
-                widget: SearchDetailsScreen(data: widget.searchData),
-              ),
+    final textTheme = Theme.of(context).textTheme;
+    return Container(
+      height: size.height,
+      width: size.width,
+      // color: Color(0xFFF2F2F2),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          SizedBox(height: 30),
+          Container(
+            padding: EdgeInsets.symmetric(horizontal: 16),
+            child: Text(
+              'Search your \nfavourite cities',
+              style: textTheme.headline3,
             ),
-      child: Container(
-        height: mainContainerHeight,
-        width: mainContainerWidth,
-        padding: EdgeInsets.symmetric(vertical: 8, horizontal: 20),
-        margin: EdgeInsets.only(top: 26),
-        decoration: BoxDecoration(
-          color: colorScheme.background,
-          borderRadius: BorderRadius.circular(mainRadius),
-          boxShadow: [
-            if (int.parse(aqi) != 0)
-              BoxShadow(
-                color: theme.colorScheme.onBackground.withOpacity(0.13),
-                blurRadius: 17,
-              ),
-          ],
-        ),
-        child: Row(
-          children: <Widget>[
-            Container(
-              height: aqiSize,
-              width: aqiSize,
-              alignment: Alignment.center,
-              padding: EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: int.parse(aqi) == 0
-                    ? colorScheme.background
-                    : helper.backgroundColor,
-                boxShadow: [
-                  BoxShadow(
-                    color: theme.colorScheme.onBackground.withOpacity(0.1),
-                    blurRadius: 17,
-                  ),
-                ],
-                borderRadius: BorderRadius.circular(radius),
-              ),
-              child: AutoSizeText(
-                int.parse(aqi) == 0 ? '-' : aqi,
-                maxLines: 1,
-                softWrap: false,
-                textAlign: TextAlign.center,
-                style: theme.textTheme.headline1.copyWith(
-                  fontWeight: FontWeight.w900,
-                  color: int.parse(aqi) == 0
-                      ? colorScheme.onBackground
-                      : helper.color,
-                ),
-              ),
-            ),
-            Expanded(
-              child: Container(
-                height: aqiSize,
-                margin: EdgeInsets.only(left: 20, right: 20),
-                child: DefaultTextStyle(
-                  style: textTheme.headline6.copyWith(
-                    // color: searchHelper.color,
-                    fontWeight: FontWeight.w700,
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Text(
-                        'STATION',
-                        style: textTheme.subtitle2.copyWith(
-                          letterSpacing: 2,
-                          // fontSize: 18,
-                          color: colorScheme.onBackground.withOpacity(0.6),
-                        ),
-                      ),
-                      Text(
-                        widget.searchData.station.name,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        softWrap: true,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
+          ),
+          SizedBox(height: 30),
+          SearchTaxtField(
+            scaffoldKey: _scaffoldKey,
+            size: size,
+            margin: EdgeInsets.symmetric(horizontal: 16),
+            textController: textController,
+          ),
+          SizedBox(height: 30),
+        ],
       ),
     );
   }

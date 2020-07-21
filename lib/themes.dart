@@ -6,7 +6,7 @@ TextTheme _textTheme(TextTheme base) {
 
 // IconThemeData _iconTheme(IconThemeData base) {
 //   return base.copyWith(
-//     color: 
+//     color:
 //   );
 // }
 
@@ -20,8 +20,8 @@ const Color _onBackground = const Color(0xFF1E3E59);
 const Color _onSurface = const Color(0xFF1E3E59);
 const Color _error = const Color(0xFF1E3E59);
 const Color _onError = const Color(0xFFF2F2F2);
-const Color _background = const Color(0xFFFFFFFF);
-const Color _surface = const Color(0xFFFFFFFF);
+const Color _background = const Color(0xFFF2F2F2);
+const Color _surface = const Color(0xFFF2F2F2);
 
 // final ThemeData kLightTheme = _buildLightTheme;
 
@@ -60,6 +60,12 @@ final ThemeData kDarkTheme = _buildDarkTheme;
 ThemeData get _buildDarkTheme {
   final ThemeData base = ThemeData.dark();
   return base.copyWith(
+    // scaffoldBackgroundColor: Colors.grey[400],
+    colorScheme: ColorScheme.dark().copyWith(
+      secondary: _secondary,
+      onSecondary: _onSecondary,
+    ),
+    applyElevationOverlayColor: true,
     dividerTheme: dividerTheme,
     canvasColor: Colors.transparent,
     textTheme: _textTheme(base.textTheme),

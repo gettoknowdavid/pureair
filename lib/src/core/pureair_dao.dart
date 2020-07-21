@@ -7,8 +7,6 @@ import 'package:pureair/src/model/aqi.dart';
 import 'package:pureair/src/model/search_model/search_aqi.dart';
 
 class Dao {
- 
-
   Future<Aqi> fetchAqi() async {
     Position position = await Geolocator()
         .getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
@@ -23,8 +21,6 @@ class Dao {
           Duration(seconds: 20),
           onTimeout: () => null,
         );
-
-    // print(response.body);
 
     if (response.statusCode == 200) {
       var json = jsonDecode(response.body);
@@ -43,8 +39,6 @@ class Dao {
           onTimeout: () => null,
         );
 
-    print(response.body);
-
     if (response.statusCode == 200) {
       var json = jsonDecode(response.body);
       return Aqi.fromJson(json);
@@ -62,7 +56,6 @@ class Dao {
           onTimeout: () => null,
         );
     if (response.statusCode == 200) {
-      print('SEARCH SUCCESSFUL');
       var json = jsonDecode(response.body);
       return SearchAqi.fromJson(json);
     } else {

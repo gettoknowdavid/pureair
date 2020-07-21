@@ -50,69 +50,69 @@ class _SettingsScreenState extends State<SettingsScreen> {
     }
 
     return Scaffold(
-        backgroundColor: Color(0xFFF2F2F2),
+      // backgroundColor: Color(0xFFF2F2F2),
 
-        body: Container(
-          height: size.height,
-          width: size.width,
-          alignment: Alignment.center,
-          child: ListView(
-    padding: EdgeInsets.symmetric(horizontal: 16),
-    children: <Widget>[
-      SizedBox(height: 20),
-      _CustomListTile(
-        header: 'Account',
-        content: <Widget>[
-          _buildListTile('Create an account'),
-        ],
-      ),
-      _CustomListTile(
-        header: 'PREFERENCES',
-        content: <Widget>[
-          _buildListTile('Recommendations'),
-          _buildListTile('Units'),
-          _buildListTile('Sensitivity'),
-          _buildListTile(
-            'Theme',
-            enabled: true,
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => SelectTheme(),
+      body: Container(
+        height: size.height,
+        width: size.width,
+        alignment: Alignment.center,
+        child: ListView(
+          padding: EdgeInsets.symmetric(horizontal: 16),
+          children: <Widget>[
+            SizedBox(height: 20),
+            _CustomListTile(
+              header: 'Account',
+              content: <Widget>[
+                _buildListTile('Create an account'),
+              ],
+            ),
+            _CustomListTile(
+              header: 'PREFERENCES',
+              content: <Widget>[
+                _buildListTile('Recommendations'),
+                _buildListTile('Units'),
+                _buildListTile('Sensitivity'),
+                _buildListTile(
+                  'Theme',
+                  enabled: true,
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => SelectTheme(),
+                      ),
+                    );
+                  },
                 ),
-              );
-            },
-          ),
-        ],
-      ),
-      _CustomListTile(
-        header: 'NOTIFICATIONS',
-        content: [
-          _buildListTile('Favourite City'),
-          _buildListTile('Smart notifications'),
-          _buildListTile('Morning report'),
-          _buildListTile('Evening report'),
-        ],
-      ),
-      _CustomListTile(
-        header: 'Help',
-        content: <Widget>[
-          _buildListTile('FAQ'),
-          _buildListTile('Contact us'),
-        ],
-      ),
-      _CustomListTile(
-        header: 'LINKS',
-        content: [
-          _buildListTile('Shop'),
-          _buildListTile('Legal'),
-        ],
-      ),
-    ],
-          ),
+              ],
+            ),
+            _CustomListTile(
+              header: 'NOTIFICATIONS',
+              content: [
+                _buildListTile('Favourite City'),
+                _buildListTile('Smart notifications'),
+                _buildListTile('Morning report'),
+                _buildListTile('Evening report'),
+              ],
+            ),
+            _CustomListTile(
+              header: 'Help',
+              content: <Widget>[
+                _buildListTile('FAQ'),
+                _buildListTile('Contact us'),
+              ],
+            ),
+            _CustomListTile(
+              header: 'LINKS',
+              content: [
+                _buildListTile('Shop'),
+                _buildListTile('Legal'),
+              ],
+            ),
+          ],
         ),
-      );
+      ),
+    );
   }
 }
 
@@ -128,11 +128,9 @@ class _CustomListTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // final height = MediaQuery.of(context).size.height;
     final width = MediaQuery.of(context).size.width;
 
     final textTheme = Theme.of(context).textTheme;
-    final theme = Theme.of(context);
 
     final headerStyle = textTheme.subtitle1.copyWith(
       color: textTheme.subtitle1.color.withOpacity(0.4),
@@ -210,7 +208,12 @@ class SelectTheme extends StatelessWidget {
                 ),
               ),
               contentPadding: listTilePadding,
-              trailing: !isSelected ? Icon(Icons.check) : null,
+              trailing: !isSelected
+                  ? Icon(
+                      Icons.check,
+                      color: colorScheme.secondary,
+                    )
+                  : null,
               onTap: () {
                 context.bloc<ThemeBloc>()
                   ..add(

@@ -9,6 +9,8 @@ abstract class SearchState extends Equatable {
 
 class SearchLoading extends SearchState {}
 
+class SearchCleared extends SearchState {}
+
 class SearchLoaded extends SearchState {
   final SearchAqi searchAqi;
 

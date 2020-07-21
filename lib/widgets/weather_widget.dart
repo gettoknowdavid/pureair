@@ -18,56 +18,53 @@ class WeatherWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
 
     final containerWidth = size.shortestSide * 0.159;
     final containerHeight = containerWidth * 2;
 
-    return Container(
-      height: containerHeight.roundToDouble(),
-      width: containerWidth.roundToDouble(),
-      padding: EdgeInsets.symmetric(vertical: 16),
-      alignment: Alignment.center,
-      decoration: BoxDecoration(
-        color: colorScheme.surface,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
+    return Material(
+      color: colorScheme.surface,
+      elevation: 20,
+      shadowColor: Colors.black87,
+      shape: RoundedRectangleBorder(
+        side: BorderSide(
           color: colorScheme.background.withOpacity(0.1),
         ),
-        boxShadow: [
-          BoxShadow(
-            color: colorScheme.onBackground.withOpacity(0.2),
-            blurRadius: 14,
-          ),
-        ],
+        borderRadius: BorderRadius.circular(12),
       ),
-      child: Column(
-        children: <Widget>[
-          ImageIcon(
-            AssetImage(icon),
-            color: colorScheme.onBackground.withOpacity(0.7),
-          ),
-          Spacer(),
-          AutoSizeText(
-            value.toString(),
-            style: textTheme.headline5.copyWith(
-              fontWeight: FontWeight.w800,
-              color: colorScheme.onBackground,
-            ),
-          ),
-          Spacer(),
-          AutoSizeText(
-            unit,
-            style: textTheme.headline6.copyWith(
+      child: Container(
+        height: containerHeight.roundToDouble(),
+        width: containerWidth.roundToDouble(),
+        padding: EdgeInsets.symmetric(vertical: 16),
+        alignment: Alignment.center,
+        child: Column(
+          children: <Widget>[
+            ImageIcon(
+              AssetImage(icon),
               color: colorScheme.onBackground.withOpacity(0.7),
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
-              letterSpacing: 2,
             ),
-          ),
-        ],
+            Spacer(),
+            AutoSizeText(
+              value.toString(),
+              style: textTheme.headline5.copyWith(
+                fontWeight: FontWeight.w800,
+                color: colorScheme.onBackground,
+              ),
+            ),
+            Spacer(),
+            AutoSizeText(
+              unit,
+              style: textTheme.headline6.copyWith(
+                color: colorScheme.onBackground.withOpacity(0.7),
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+                letterSpacing: 2,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -88,7 +85,7 @@ class WeatherList extends StatelessWidget {
     final iaqi = model.data.iaqi;
 
     return Row(
-     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       // spacing: ((size.width - 56) - ((size.shortestSide * 0.159) * 4)) / 2.9,
       children: <Widget>[
         WeatherWidget(

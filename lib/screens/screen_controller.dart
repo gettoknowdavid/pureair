@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pureair/blocs/tabs/tabs_bloc.dart';
@@ -17,6 +15,7 @@ class _ScreenControllerState extends State<ScreenController> {
   TabsBloc get tabsBLoc => BlocProvider.of<TabsBloc>(context);
   Size get size => MediaQuery.of(context).size;
   ColorScheme get colorScheme => Theme.of(context).colorScheme;
+  GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   Widget _icons(Screen screen) {
     switch (screen) {
@@ -63,6 +62,11 @@ class _ScreenControllerState extends State<ScreenController> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    Color mainColor =
+        theme.brightness == Brightness.light ? Colors.white : Colors.black;
+
     return MediaQuery(
       data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
       child: BlocBuilder<TabsBloc, TabsState>(
@@ -70,12 +74,13 @@ class _ScreenControllerState extends State<ScreenController> {
         builder: (context, state) {
           final selectedIndex = Screen.values.indexOf(state.widget.screen);
           return Scaffold(
-            backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+            key: _scaffoldKey,
+            // backgroundColor: Theme.of(context).scaffoldBackgroundColor,
             body: Container(
               height: size.height,
               width: size.width,
               padding: EdgeInsets.symmetric(horizontal: 12),
-              color: Theme.of(context).scaffoldBackgroundColor,
+              color: mainColor,
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(60),
                 child: state.widget.widget,
@@ -83,13 +88,13 @@ class _ScreenControllerState extends State<ScreenController> {
             ),
             appBar: PureAirAppBar(
               title: state.widget.title,
-              color: Theme.of(context).scaffoldBackgroundColor,
+              color: mainColor,
             ),
             bottomNavigationBar: PureAirBottomNavBar(
               size: size,
               items: _items(),
               selectedIndex: selectedIndex,
-              backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+              backgroundColor: mainColor,
               showElevation: false,
               onSelected: (i) => tabsBLoc..add(UpdateTab(Screen.values[i])),
             ),
@@ -100,46 +105,3 @@ class _ScreenControllerState extends State<ScreenController> {
   }
 }
 
-class ScreenClipper extends CustomPainter {
-  final Color color;
-
-  ScreenClipper(this.color);
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    double width = size.width;
-    double height = size.height;
-
-    double sideWidth = 10;
-
-    double clipHeight = size.height - (size.shortestSide * 0.16);
-
-    double curve = 60;
-
-    Path newPath = Path();
-    newPath
-      ..lineTo(0, size.height)
-      // ..lineTo(0,size.height - (size.shortestSide * 0.16))
-      ..lineTo(width, size.height)
-      // ..lineTo(width, size.height - (size.shortestSide * 0.16))
-      ..lineTo(width - curve, clipHeight)
-      ..quadraticBezierTo(
-          width - sideWidth, clipHeight + curve, width - sideWidth, clipHeight)
-      // ..quadraticBezierTo(
-      //     width - sideWidth, clipHeight, width - curve, clipHeight)
-
-      //
-
-      ..lineTo(sideWidth + curve, clipHeight)
-      ..quadraticBezierTo(sideWidth, clipHeight, sideWidth, clipHeight - curve)
-      ..lineTo(sideWidth, 0)
-      ..close();
-
-    Paint paint = Paint()..color = color;
-
-    return canvas.drawPath(newPath, paint);
-  }
-
-  @override
-  bool shouldRepaint(CustomPainter oldDelegate) => true;
-}

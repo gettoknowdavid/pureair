@@ -72,30 +72,28 @@ class _RecommendationsListState extends State<RecommendationsList> {
                 },
               );
             },
-            child: Container(
-              height: containerSize,
-              width: containerSize,
-              padding: EdgeInsets.symmetric(vertical: 12),
-              decoration: BoxDecoration(
-                color: helper.backgroundColor,
+            child: Material(
+              color: helper.backgroundColor,
+              elevation: 12,
+              shadowColor: Colors.black38,
+              shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(16),
-                border: Border.all(
+                side: BorderSide(
                   color: helper.color.withOpacity(0.1),
                 ),
-                boxShadow: [
-                  BoxShadow(
-                    color: colorScheme.onBackground.withOpacity(0.1),
-                    blurRadius: 14,
-                  ),
-                ],
               ),
               child: Container(
                 height: containerSize,
                 width: containerSize,
-                padding: EdgeInsets.all(6),
-                child: ImageIcon(
-                  AssetImage(e.keys.elementAt(0)),
-                  color: helper.color,
+                padding: EdgeInsets.symmetric(vertical: 12),
+                child: Container(
+                  height: containerSize,
+                  width: containerSize,
+                  padding: EdgeInsets.all(6),
+                  child: ImageIcon(
+                    AssetImage(e.keys.elementAt(0)),
+                    color: helper.color,
+                  ),
                 ),
               ),
             ),

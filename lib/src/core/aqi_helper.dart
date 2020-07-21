@@ -26,7 +26,8 @@ class AqiHelper {
       color = red;
     else if (aqi < 301)
       color = purple;
-    else if (aqi < 501) color = maroon;
+    else
+      color = maroon;
     return color;
   }
 
@@ -60,7 +61,8 @@ class AqiHelper {
         color = red;
       else if (conc < 405)
         color = purple;
-      else if (conc < 504) color = maroon;
+      else
+        color = maroon;
       return color;
     }
   }
@@ -95,7 +97,8 @@ class AqiHelper {
         color = red;
       else if (conc < 30.5)
         color = purple;
-      else if (conc < 40.4) color = maroon;
+      else
+        color = maroon;
       return color;
     }
   }
@@ -130,7 +133,8 @@ class AqiHelper {
         color = red;
       else if (conc < 1250)
         color = purple;
-      else if (conc < 1649) color = maroon;
+      else
+        color = maroon;
       return color;
     }
   }
@@ -165,7 +169,8 @@ class AqiHelper {
         color = red;
       else if (conc < 425)
         color = purple;
-      else if (conc < 504) color = maroon;
+      else
+        color = maroon;
       return color;
     }
   }
@@ -200,7 +205,8 @@ class AqiHelper {
         color = red;
       else if (conc < 250.5)
         color = purple;
-      else if (conc < 350.4) color = maroon;
+      else
+        color = maroon;
       return color;
     }
   }
@@ -235,7 +241,8 @@ class AqiHelper {
         color = red;
       else if (conc < 605)
         color = purple;
-      else if (conc < 804) color = maroon;
+      else
+        color = maroon;
       return color;
     }
   }
@@ -266,7 +273,7 @@ class AqiHelper {
       rec = 'Ouch, the air is quite unhealthy.';
     } else if (aqi < 301) {
       rec = 'Wow, the air is very unhealthy!';
-    } else if (aqi < 501) {
+    } else {
       rec = 'The air is hazardous! Totally unhealthy!';
     }
     return rec;
@@ -310,7 +317,7 @@ class AqiHelper {
           'images/cycling.png': "Its a great time to go cycling.",
         },
       ];
-    } else if (aqi > 101) {
+    } else {
       tips = [
         {
           'images/icon-mask.png': "Wear a protection mask outdoors",
@@ -325,5 +332,40 @@ class AqiHelper {
       ];
     }
     return tips;
+  }
+
+  String get dominantPol {
+    var domPol = aqiModel.data.dominentpol;
+    if (domPol == 'co') {
+      return 'CO';
+    } else if (domPol == 'no2') {
+      return 'NO\u2082';
+    } else if (domPol == 'o3') {
+      return 'O\u2083';
+    } else if (domPol == 'pm10') {
+      return 'PM10';
+    } else if (domPol == 'pm25') {
+      return 'PM2.5';
+    } else {
+      return 'SO\u2082';
+    }
+  }
+
+  String get healthRisk {
+    var domPol = aqiModel.data.dominentpol;
+
+    if (domPol == 'co') {
+      return 'CO can cause headache, dizziness, vomiting, and nausea. Long term exposure could lead to death.';
+    } else if (domPol == 'no2') {
+      return 'Long term exposure to NO\u2082 may decrease your lung function and increase risk of respiratory symptoms.';
+    } else if (domPol == 'o3') {
+      return 'If you\'re asthmatic, O\u2083 is dangerous for you. It is also linked to abnormal lung development in children.';
+    } else if (domPol == 'pm10') {
+      return 'Coughing, asthma attacks, bronchitis, high blood pressure, premature death are a few risks of PM10.';
+    } else if (domPol == 'pm25') {
+      return 'PM2.5 may cause asthma, respiratory inflammation, deteriorated lung functions and even cancer.';
+    } else {
+      return 'SO\u2082 can cause accumulation of fluid in the lungs, coughing, asthma, difficult breathing, etc.';
+    }
   }
 }

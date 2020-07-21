@@ -1,13 +1,14 @@
+import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pureair/blocs/search/search_bloc.dart';
+import 'package:pureair/widgets/error_snackbar.dart';
 
 class SearchTaxtField extends StatelessWidget {
   const SearchTaxtField({
     Key key,
     @required this.size,
     this.margin,
-    this.onPressed,
     @required this.textController,
     this.scaffoldKey,
   }) : super(key: key);
@@ -16,7 +17,6 @@ class SearchTaxtField extends StatelessWidget {
   final GlobalKey<ScaffoldState> scaffoldKey;
   final EdgeInsets margin;
 
-  final VoidCallback onPressed;
   final TextEditingController textController;
 
   @override
@@ -25,6 +25,23 @@ class SearchTaxtField extends StatelessWidget {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final textTheme = theme.textTheme;
+
+    Future<void> _search() async {
+      var result = await (Connectivity().checkConnectivity());
+      if (result == ConnectivityResult.none) {
+        scaffoldKey.currentState.showSnackBar(
+          SnackBar(
+            elevation: 0,
+            content: ErrorSnackBar(
+              size: size,
+              text: 'Please check your connection and try again.',
+            ),
+          ),
+        );
+      } else {
+        context.bloc<SearchBloc>().add(SearchCity(textController.text));
+      }
+    }
 
     return Container(
       margin: margin,
@@ -86,62 +103,22 @@ class SearchTaxtField extends StatelessWidget {
                       ),
                     );
                   } else {
-                    context
-                        .bloc<SearchBloc>()
-                        .add(SearchCity(textController.text));
+                    _search();
                     FocusScope.of(context).requestFocus(FocusNode());
                   }
                 },
                 child: Container(
                   padding: EdgeInsets.all(20),
-                  color: colorScheme.onBackground,
+                  color: colorScheme.secondary,
                   child: Icon(
                     Icons.search,
-                    color: colorScheme.surface,
+                    color: colorScheme.onSecondary,
                     size: 30,
                   ),
                 ),
               )
             ],
           ),
-        ),
-      ),
-    );
-  }
-}
-
-class ErrorSnackBar extends StatelessWidget {
-  const ErrorSnackBar({
-    Key key,
-    @required this.size,
-    @required this.text,
-  }) : super(key: key);
-
-  final Size size;
-  final String text;
-
-  @override
-  Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-    final textTheme = Theme.of(context).textTheme;
-
-    return Container(
-      height: size.shortestSide * 0.2,
-      width: size.width,
-      alignment: Alignment.topCenter,
-      child: Container(
-        height: size.height * 0.1,
-        width: size.width * 0.92,
-        padding: EdgeInsets.symmetric(horizontal: 30),
-        alignment: Alignment.center,
-        decoration: BoxDecoration(
-          // color: colorScheme.primary,
-          borderRadius: BorderRadius.circular(24),
-        ),
-        child: Text(
-          text,
-          style: textTheme.headline6.copyWith(fontSize: 22),
-          textAlign: TextAlign.center,
         ),
       ),
     );

@@ -11,11 +11,9 @@ import 'package:sembast/sembast.dart';
 class DbRepository extends Repository {
   static const String AQI_STORE_NAME = '__air_quality__';
   static const String THEME_STORE_NAME = '__theme_store__';
-  static const String PUREAIR_STORE_NAME = '__pureair_store__';
 
-  // final store = intMapStoreFactory.store(AQI_STORE_NAME);
+  final store = intMapStoreFactory.store(AQI_STORE_NAME);
   final themeStore = intMapStoreFactory.store(THEME_STORE_NAME);
-  final store = intMapStoreFactory.store(PUREAIR_STORE_NAME);
 
   Future<Database> get _database async =>
       await PureAirDatabase.instance.database;
@@ -37,8 +35,6 @@ class DbRepository extends Repository {
 
     return snapshot.map((snapshot) {
       final pureAir = Aqi.fromJson(snapshot.value);
-
-      print(pureAir);
       return pureAir;
     }).last;
   }
@@ -64,7 +60,6 @@ class DbRepository extends Repository {
 
   @override
   Future<SearchAqi> searchModel(String city) async {
-    // await store.drop(await _database);
     var source = jsonEncode(await dao.searchAqi(city));
     var json = jsonDecode(source);
     var main = SearchAqi.fromJson(json);

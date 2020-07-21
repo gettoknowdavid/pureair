@@ -25,55 +25,50 @@ class PollutantWidget extends StatelessWidget {
 
     final containerSize = size.shortestSide * 0.159;
 
-    return Container(
-      height: containerSize.roundToDouble(),
-      width: containerSize.roundToDouble(),
-      // padding: EdgeInsets.symmetric(vertical: 10),
-      alignment: Alignment.center,
-      decoration: BoxDecoration(
-        color: backgroundColor ?? colorScheme.background,
+    return Material(
+      color: backgroundColor ?? colorScheme.background,
+      // elevation: 20,
+      // shadowColor: Colors.black87,
+      shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
-        border: value.toString().contains('-')
-            ? Border.all(color: Colors.transparent)
-            : Border.all(
-                color: colorScheme.onBackground.withOpacity(0.1),
-              ),
-        boxShadow: [
-          if (!value.toString().contains('-'))
-            BoxShadow(
-              color: colorScheme.onBackground.withOpacity(0.2),
-              blurRadius: 12,
-            ),
-        ],
+        side: value.toString().contains('-')
+            ? BorderSide.none
+            : BorderSide(color: colorScheme.onBackground.withOpacity(0.1)),
       ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          Spacer(),
-          Text(
-            title.toUpperCase(),
-            style: textTheme.bodyText2.copyWith(
-              color: textColor != null
-                  ? textColor.withOpacity(0.6)
-                  : textTheme.overline.color.withOpacity(0.6),
-              // fontSize: 16,
-              fontWeight: FontWeight.w700,
-              letterSpacing: 2,
+      child: Container(
+        height: containerSize.roundToDouble(),
+        width: containerSize.roundToDouble(),
+        // padding: EdgeInsets.symmetric(vertical: 10),
+        alignment: Alignment.center,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Spacer(),
+            Text(
+              title.toUpperCase(),
+              style: textTheme.bodyText2.copyWith(
+                color: textColor != null
+                    ? textColor.withOpacity(0.6)
+                    : textTheme.overline.color.withOpacity(0.6),
+                // fontSize: 16,
+                fontWeight: FontWeight.w700,
+                letterSpacing: 2,
+              ),
             ),
-          ),
-          Spacer(),
-          Text(
-            value.toString(),
-            maxLines: 1,
-            softWrap: true,
-            overflow: TextOverflow.ellipsis,
-            style: textTheme.headline5.copyWith(
-              color: textColor ?? colorScheme.onBackground,
-              fontWeight: FontWeight.w800,
+            Spacer(),
+            Text(
+              value.toString(),
+              maxLines: 1,
+              softWrap: true,
+              overflow: TextOverflow.ellipsis,
+              style: textTheme.headline5.copyWith(
+                color: textColor ?? colorScheme.onBackground,
+                fontWeight: FontWeight.w800,
+              ),
             ),
-          ),
-          Spacer(),
-        ],
+            Spacer(),
+          ],
+        ),
       ),
     );
   }

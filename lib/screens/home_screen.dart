@@ -1,23 +1,18 @@
 import 'dart:async';
 
 import 'package:connectivity/connectivity.dart';
-import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:pureair/blocs/model/model_bloc.dart';
-import 'package:pureair/blocs/search/search_bloc.dart';
 import 'package:pureair/src/core/aqi_helper.dart';
 import 'package:pureair/src/core/db_repository.dart';
 import 'package:pureair/widgets/air_purifier_image.dart';
 import 'package:pureair/widgets/aqi_widget.dart';
 import 'package:pureair/widgets/check_connection_widget.dart';
 import 'package:pureair/widgets/error_screen.dart';
-import 'package:pureair/widgets/fade_page_route.dart';
 import 'package:pureair/widgets/loading_indicator.dart';
-import 'package:pureair/widgets/pureair_app_bar.dart';
-import 'package:pureair/widgets/pureair_bottom_sheet.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -106,21 +101,22 @@ class _HomeScreenState extends State<HomeScreen> {
     final aqiWidgetWidth = size.width;
 
     return Scaffold(
-      backgroundColor: Color(0xFFF2F2F2),
+      // backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       key: _scaffoldKey,
-      body: BlocBuilder<ModelBloc, ModelState>(
-        builder: (context, state) {
-          if (state is ModelLoaded) {
-            AqiHelper helper = AqiHelper(state.model);
-            return SmartRefresher(
-              controller: _refreshController,
-              enablePullDown: true,
-              onRefresh: () async {
-                await Future.delayed(Duration(seconds: 1));
-                await refresher;
-                _refreshController.refreshCompleted();
-              },
-              child: ListView(
+      body: SmartRefresher(
+        controller: _refreshController,
+        enablePullDown: true,
+        onRefresh: () async {
+          await Future.delayed(Duration(seconds: 1));
+          await refresher;
+          _refreshController.refreshCompleted();
+        },
+        child: BlocBuilder<ModelBloc, ModelState>(
+          builder: (context, state) {
+            if (state is ModelLoaded) {
+              AqiHelper helper = AqiHelper(state.model);
+              
+              return ListView(
                 shrinkWrap: true,
                 primary: false,
                 padding: EdgeInsets.symmetric(vertical: 16),
@@ -138,17 +134,17 @@ class _HomeScreenState extends State<HomeScreen> {
                     width: aqiWidgetWidth,
                   ),
                 ],
-              ),
-            );
-          } else if (state is ModelNotLoaded) {
-            return ErrorScreen(
-              size: size,
-              title: 'Please check your internet connection and try again.',
-            );
-          } else {
-            return LoadingIndicator(size: size);
-          }
-        },
+              );
+            } else if (state is ModelNotLoaded) {
+              return ErrorScreen(
+                size: size,
+                title: 'Please check your internet connection and try again.',
+              );
+            } else {
+              return LoadingIndicator(size: size);
+            }
+          },
+        ),
       ),
     );
   }
