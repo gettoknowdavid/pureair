@@ -13,12 +13,12 @@ import 'package:pureair/widgets/fade_page_route.dart';
 class AqiWidget extends StatefulWidget {
   final double width;
   final double height;
-  final PureAir pureAir;
+  final Aqi model;
   final AqiHelper helper;
 
   const AqiWidget({
     Key key,
-    @required this.pureAir,
+    @required this.model,
     @required this.width,
     @required this.height,
     this.helper,
@@ -41,14 +41,16 @@ class _AqiWidgetState extends State<AqiWidget> {
 
   Widget get _buildAqiValue {
     return Container(
-      height: widget.width * 0.75,
+      // height: widget.width * 0.75,
       width: widget.width,
       alignment: Alignment.center,
       padding: EdgeInsets.all(5),
       child: AutoSizeText(
-        '${widget.pureAir.model.data.aqi}',
+        '${widget.model.data.aqi}',
         maxLines: 1,
         softWrap: false,
+        minFontSize: 180,
+        // maxFontSize: 300,
         style: textTheme.headline1.copyWith(
           fontSize: 300,
           fontWeight: FontWeight.w900,
@@ -66,7 +68,7 @@ class _AqiWidgetState extends State<AqiWidget> {
         textAlign: TextAlign.center,
         style: textTheme.headline5.copyWith(
           color: widget.helper.color,
-          fontSize: 26,
+          fontSize: 24,
           fontWeight: FontWeight.w500,
         ),
       ),
@@ -75,7 +77,7 @@ class _AqiWidgetState extends State<AqiWidget> {
 
   Widget get _buildLocation {
     return Padding(
-      padding: EdgeInsets.fromLTRB(20, 5, 20, 5),
+      padding: EdgeInsets.fromLTRB(20, 0, 20, 5),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
@@ -84,17 +86,16 @@ class _AqiWidgetState extends State<AqiWidget> {
             size: 18,
             color: widget.helper.color,
           ),
-          SizedBox(height: 10),
           Container(
             alignment: Alignment.center,
             child: AutoSizeText(
-              '${widget.pureAir.model.data.city.name}'.toUpperCase(),
+              '${widget.model.data.city.name}',
               maxLines: 2,
               softWrap: true,
               textAlign: TextAlign.center,
               overflow: TextOverflow.ellipsis,
               style: TextStyle(
-                fontSize: 22,
+                fontSize: 20,
                 color: widget.helper.color,
                 letterSpacing: 1.0,
                 fontWeight: FontWeight.w600,
@@ -107,12 +108,12 @@ class _AqiWidgetState extends State<AqiWidget> {
   }
 
   Widget get _buildDate {
-    AqiHelper helper = AqiHelper(widget.pureAir.model);
+    AqiHelper helper = AqiHelper(widget.model);
 
     return Container(
       padding: EdgeInsets.only(bottom: 10),
       child: AutoSizeText(
-        dateFormat(DateTime.parse(widget.pureAir.timeStamp)),
+        dateFormat(widget.model.data.time.s),
         style: TextStyle(
           color: helper.color.withOpacity(0.85),
           fontSize: 20,
@@ -134,7 +135,7 @@ class _AqiWidgetState extends State<AqiWidget> {
         )),
         Column(
           children: <Widget>[
-            SizedBox(height: 20),
+            Spacer(),
             _buildAqiValue,
             _buildHealthTip,
             Spacer(),
@@ -159,12 +160,12 @@ class _AqiWidgetState extends State<AqiWidget> {
 
   @override
   Widget build(BuildContext context) {
-    AqiHelper helper = AqiHelper(widget.pureAir.model);
+    AqiHelper helper = AqiHelper(widget.model);
 
     return GestureDetector(
       onTap: () {
         Navigator.of(context).push(
-          FadePageRoute(widget: DetailsScreen(model: widget.pureAir.model)),
+          FadePageRoute(widget: DetailsScreen(model: widget.model)),
         );
       },
       child: Container(

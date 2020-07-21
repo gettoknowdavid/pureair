@@ -7,17 +7,15 @@ part 'pureair.g.dart';
 @JsonSerializable(explicitToJson: true)
 class PureAir extends Equatable {
   PureAir({
-    this.id,
     this.model,
     this.timeStamp,
   });
 
-   int id;
-   Aqi model;
-   String timeStamp;
+  final Aqi model;
+  final String timeStamp;
 
   @override
-  List<Object> get props => [id, model, timeStamp];
+  List<Object> get props => [model, timeStamp];
 
   static PureAir fromJson(Map<String, dynamic> json) => _$PureAirFromJson(json);
   Map<String, dynamic> toJson() => _$PureAirToJson(this);

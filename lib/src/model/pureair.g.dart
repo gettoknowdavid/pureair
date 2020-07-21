@@ -8,7 +8,6 @@ part of 'pureair.dart';
 
 PureAir _$PureAirFromJson(Map<String, dynamic> json) {
   return PureAir(
-    id: json['id'] as int,
     model: json['model'] == null
         ? null
         : Aqi.fromJson(json['model'] as Map<String, dynamic>),
@@ -17,7 +16,6 @@ PureAir _$PureAirFromJson(Map<String, dynamic> json) {
 }
 
 Map<String, dynamic> _$PureAirToJson(PureAir instance) => <String, dynamic>{
-      'id': instance.id,
       'model': instance.model?.toJson(),
       'timeStamp': instance.timeStamp,
     };

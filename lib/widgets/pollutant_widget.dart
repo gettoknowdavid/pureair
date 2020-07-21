@@ -28,7 +28,7 @@ class PollutantWidget extends StatelessWidget {
     return Container(
       height: containerSize.roundToDouble(),
       width: containerSize.roundToDouble(),
-      padding: EdgeInsets.symmetric(vertical: 12),
+      // padding: EdgeInsets.symmetric(vertical: 10),
       alignment: Alignment.center,
       decoration: BoxDecoration(
         color: backgroundColor ?? colorScheme.background,
@@ -47,7 +47,9 @@ class PollutantWidget extends StatelessWidget {
         ],
       ),
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
+          Spacer(),
           Text(
             title.toUpperCase(),
             style: textTheme.bodyText2.copyWith(
@@ -64,12 +66,13 @@ class PollutantWidget extends StatelessWidget {
             value.toString(),
             maxLines: 1,
             softWrap: true,
-            overflow: TextOverflow.fade,
+            overflow: TextOverflow.ellipsis,
             style: textTheme.headline5.copyWith(
               color: textColor ?? colorScheme.onBackground,
               fontWeight: FontWeight.w800,
             ),
           ),
+          Spacer(),
         ],
       ),
     );
@@ -91,9 +94,14 @@ class PollutantList extends StatelessWidget {
     final iaqi = model.data.iaqi;
     AqiHelper helper = AqiHelper(model);
 
-    return Wrap(
-      runSpacing: 20,
-      spacing: ((size.width - 56) - ((size.shortestSide * 0.159) * 4)) / 2.9,
+    return GridView(
+      shrinkWrap: true,
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 4,
+        mainAxisSpacing: 20,
+        crossAxisSpacing: 25,
+      ),
+      primary: false,
       children: <Widget>[
         PollutantWidget(
           size: size,

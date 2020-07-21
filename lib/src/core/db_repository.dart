@@ -5,7 +5,6 @@ import 'package:pureair/src/core/repository.dart';
 import 'package:pureair/src/database/pureair_database.dart';
 import 'package:pureair/src/model/aqi.dart';
 import 'package:pureair/src/model/pure_air_theme.dart';
-import 'package:pureair/src/model/pureair.dart';
 import 'package:pureair/src/model/search_model/search_aqi.dart';
 import 'package:sembast/sembast.dart';
 
@@ -32,71 +31,21 @@ class DbRepository extends Repository {
   }
 
   @override
-  Future<PureAir> get fetchPureAir async {
-    var source = jsonEncode(await dao.fetchAqi());
-    var json = jsonDecode(source);
-    var model = Aqi.fromJson(json);
-
-    final pureAir =
-        PureAir(model: model, timeStamp: model.data.time.s.toIso8601String());
-    var toString = jsonEncode(pureAir);
-    var newJson = jsonDecode(toString);
-    return PureAir.fromJson(newJson);
-  }
-
-  @override
   Future<Aqi> get loadModel async {
-    final record = await store.record(1).get(await _database);
+    final finder = Finder(sortOrders: [SortOrder("key", false)]);
+    final snapshot = await store.find(await _database, finder: finder);
 
-    return record == null ? null : Aqi.fromJson(record);
+    return snapshot.map((snapshot) {
+      final pureAir = Aqi.fromJson(snapshot.value);
+
+      print(pureAir);
+      return pureAir;
+    }).last;
   }
 
   @override
   Future saveModel(Aqi model) async {
     await store.add(await _database, model.toJson());
-  }
-
-  @override
-  Future get clearAqiStore async => await store.drop(await _database);
-
-  test() async {
-    // Add the data and get its new generated key
-    var key = await store.add(await _database, {'value': 'test'});
-
-// Retrieve the record
-    var record = store.record(key);
-    var readMap = await record.get(await _database);
-
-    print(readMap);
-  }
-
-  @override
-  Future<PureAir> get loadPureAir async {
-    final finder = Finder(sortOrders: [SortOrder("timeStamp", false)]);
-
-    final snapshot = await store.find(await _database, finder: finder);
-
-    var source = jsonEncode(await dao.fetchAqi());
-
-    return snapshot.map((snapshot) {
-      final pureAir = PureAir.fromJson(snapshot.value);
-      final timeStamp = DateTime.now().toIso8601String();
-
-      var json = jsonDecode(source);
-
-      pureAir.id = snapshot.key;
-      pureAir.model = Aqi.fromJson(json);
-      pureAir.timeStamp = timeStamp;
-
-      print(pureAir);
-      return pureAir;
-    }).last;
-    // final record = await store.record(key)
-  }
-
-  @override
-  Future savePureAir(PureAir pureAir) async {
-    await store.add(await _database, pureAir.toJson());
   }
 
   @override

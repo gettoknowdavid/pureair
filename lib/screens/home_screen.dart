@@ -10,6 +10,7 @@ import 'package:pureair/blocs/model/model_bloc.dart';
 import 'package:pureair/blocs/search/search_bloc.dart';
 import 'package:pureair/src/core/aqi_helper.dart';
 import 'package:pureair/src/core/db_repository.dart';
+import 'package:pureair/widgets/air_purifier_image.dart';
 import 'package:pureair/widgets/aqi_widget.dart';
 import 'package:pureair/widgets/check_connection_widget.dart';
 import 'package:pureair/widgets/error_screen.dart';
@@ -31,7 +32,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Size get size => MediaQuery.of(context).size;
   final Connectivity _connectivity = Connectivity();
-  VoidCallback _bottomSheetCallBack;
 
   @override
   void initState() {
@@ -39,7 +39,6 @@ class _HomeScreenState extends State<HomeScreen> {
     _refreshController = RefreshController(initialRefresh: false);
     _connSubscription =
         _connectivity.onConnectivityChanged.listen(_updateConnStatus);
-    _bottomSheetCallBack = _showBottomSheet;
   }
 
   @override
@@ -49,38 +48,6 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   DbRepository repo = DbRepository();
-
-  void _showBottomSheet() {
-    setState(() {
-      _bottomSheetCallBack = null;
-    });
-    repo.test();
-    _scaffoldKey.currentState
-        .showBottomSheet(
-          (context) => PureAirBottomSheet(
-            size: size,
-            close: () {
-              Navigator.pop(context);
-              context.bloc<SearchBloc>().add(ClearSearch());
-            },
-          ),
-          elevation: 70,
-          clipBehavior: Clip.antiAliasWithSaveLayer,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.vertical(
-              top: Radius.circular(40),
-            ),
-          ),
-        )
-        .closed
-        .whenComplete(() {
-      if (mounted) {
-        setState(() {
-          _bottomSheetCallBack = _showBottomSheet;
-        });
-      }
-    });
-  }
 
   Future<void> _updateConnStatus(ConnectivityResult result) async {
     if (result == ConnectivityResult.none) {
@@ -135,50 +102,54 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
 
-    final aqiWidgetHeight = size.longestSide * 0.6;
-    final aqiWidgetWidth = size.shortestSide;
-
+    final aqiWidgetHeight = size.height * 0.6;
+    final aqiWidgetWidth = size.width;
 
     return Scaffold(
-        backgroundColor: Color(0xFFF2F2F2),
-        key: _scaffoldKey,
-        body: BlocBuilder<ModelBloc, ModelState>(
-          builder: (context, state) {
-    if (state is ModelLoaded) {
-      AqiHelper helper = AqiHelper(state.pureAir.model);
-      return SmartRefresher(
-        controller: _refreshController,
-        enablePullDown: true,
-        onRefresh: () async {
-          await Future.delayed(Duration(seconds: 1));
-          await refresher;
-          _refreshController.refreshCompleted();
+      backgroundColor: Color(0xFFF2F2F2),
+      key: _scaffoldKey,
+      body: BlocBuilder<ModelBloc, ModelState>(
+        builder: (context, state) {
+          if (state is ModelLoaded) {
+            AqiHelper helper = AqiHelper(state.model);
+            return SmartRefresher(
+              controller: _refreshController,
+              enablePullDown: true,
+              onRefresh: () async {
+                await Future.delayed(Duration(seconds: 1));
+                await refresher;
+                _refreshController.refreshCompleted();
+              },
+              child: ListView(
+                shrinkWrap: true,
+                primary: false,
+                padding: EdgeInsets.symmetric(vertical: 16),
+                children: <Widget>[
+                  AqiWidget(
+                    model: state.model,
+                    helper: helper,
+                    height: aqiWidgetHeight,
+                    width: aqiWidgetWidth,
+                  ),
+                  SizedBox(height: 40),
+                  AirPurifierImage(
+                    size: size,
+                    height: aqiWidgetHeight,
+                    width: aqiWidgetWidth,
+                  ),
+                ],
+              ),
+            );
+          } else if (state is ModelNotLoaded) {
+            return ErrorScreen(
+              size: size,
+              title: 'Please check your internet connection and try again.',
+            );
+          } else {
+            return LoadingIndicator(size: size);
+          }
         },
-        child: ListView(
-          shrinkWrap: true,
-          primary: false,
-          padding: EdgeInsets.symmetric(vertical: 16),
-          children: <Widget>[
-            AqiWidget(
-              pureAir: state.pureAir,
-              helper: helper,
-              height: aqiWidgetHeight,
-              width: aqiWidgetWidth,
-            ),
-            SizedBox(height: 40),
-          ],
-        ),
-      );
-    } else if (state is ModelNotLoaded) {
-      return ErrorScreen(
-        size: size,
-        title: 'Please check your internet connection and try again.',
-      );
-    } else {
-      return LoadingIndicator(size: size);
-    }
-          },
-        ),
-      );
+      ),
+    );
   }
 }

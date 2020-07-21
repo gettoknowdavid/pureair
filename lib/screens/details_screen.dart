@@ -139,10 +139,10 @@ class _DetailsScreenState extends State<DetailsScreen> {
 
   Widget get _buildAqiValue {
     return Container(
-      height: size.width * 0.26,
-      width: size.width * 0.26,
+      height: size.width * 0.22,
+      width: size.width * 0.22,
       alignment: Alignment.center,
-      padding: EdgeInsets.all(16),
+      padding: EdgeInsets.all(20),
       // margin: EdgeInsets.only(bottom: 26),
       decoration: BoxDecoration(
         color: helper.backgroundColor,

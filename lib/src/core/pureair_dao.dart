@@ -7,23 +7,11 @@ import 'package:pureair/src/model/aqi.dart';
 import 'package:pureair/src/model/search_model/search_aqi.dart';
 
 class Dao {
-  // double lon = 2.3522;
-  // double lat = 48.8566;
+ 
 
   Future<Aqi> fetchAqi() async {
     Position position = await Geolocator()
         .getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
-    // positionStream = geolocator
-    //     .getPositionStream(locationOptions)
-    //     .listen((Position position) {
-    //   lat = position.latitude;
-    //   lon = position.longitude;
-    //   print(position == null
-    //       ? 'Unknown'
-    //       : position.latitude.toString() +
-    //           ', ' +
-    //           position.longitude.toString());
-    // });
 
     double lon = position.latitude;
     double lat = position.longitude;
@@ -36,7 +24,7 @@ class Dao {
           onTimeout: () => null,
         );
 
-    print(response.body);
+    // print(response.body);
 
     if (response.statusCode == 200) {
       var json = jsonDecode(response.body);

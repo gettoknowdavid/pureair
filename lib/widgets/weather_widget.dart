@@ -87,9 +87,9 @@ class WeatherList extends StatelessWidget {
   Widget build(BuildContext context) {
     final iaqi = model.data.iaqi;
 
-    return Wrap(
-      runSpacing: 20,
-      spacing: ((size.width - 56) - ((size.shortestSide * 0.159) * 4)) / 2.9,
+    return Row(
+     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      // spacing: ((size.width - 56) - ((size.shortestSide * 0.159) * 4)) / 2.9,
       children: <Widget>[
         WeatherWidget(
           size: size,

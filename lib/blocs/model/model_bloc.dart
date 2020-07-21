@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:pureair/src/core/db_repository.dart';
 import 'package:pureair/src/core/repository.dart';
 import 'package:pureair/src/model/aqi.dart';
 import 'package:pureair/src/model/pureair.dart';
@@ -14,8 +13,6 @@ class ModelBloc extends Bloc<ModelEvent, ModelState> {
   ModelBloc(this.repository) : super(ModelLoading());
 
   final Repository repository;
-
-  DbRepository repo = DbRepository();
 
   @override
   Stream<ModelState> mapEventToState(
@@ -30,9 +27,9 @@ class ModelBloc extends Bloc<ModelEvent, ModelState> {
 
   Stream<ModelState> _mapLoadToState() async* {
     try {
-      PureAir pureAir = await repository.loadPureAir;
+      Aqi model = await repository.loadModel;
 
-      yield ModelLoaded(pureAir);
+      yield ModelLoaded(model);
     } catch (_) {
       yield ModelNotLoaded();
     }
@@ -40,13 +37,10 @@ class ModelBloc extends Bloc<ModelEvent, ModelState> {
 
   Stream<ModelState> _mapRefreshToState() async* {
     try {
-      PureAir pureAir = await repository.fetchPureAir;
-      // PureAir pureAir = PureAir(model: model);
+      Aqi model = await repository.fetchModel;
 
-      yield ModelLoaded(pureAir);
-      await repository.savePureAir(pureAir);
-
-      print(pureAir.timeStamp);
+      yield ModelLoaded(model);
+      await repository.saveModel(model);
     } catch (_) {
       yield ModelNotLoaded();
     }

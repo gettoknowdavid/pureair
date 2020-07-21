@@ -27,7 +27,7 @@ class _RecommendationsListState extends State<RecommendationsList> {
     final containerSize = widget.size.shortestSide * 0.16;
 
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: helper.healthRec.map(
         (e) {
           return GestureDetector(
@@ -63,7 +63,7 @@ class _RecommendationsListState extends State<RecommendationsList> {
                             e.values.elementAt(0),
                             softWrap: true,
                             maxLines: 4,
-                            style: textTheme.headline5,
+                            style: textTheme.headline6,
                           ),
                         ),
                       ],
