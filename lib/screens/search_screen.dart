@@ -124,7 +124,7 @@ class _SearchScreenState extends State<SearchScreen> {
               ),
             );
           } else if (state is SearchLoading) {
-            return LoadingIndicator(size: size);
+            return LoadingIndicator();
           } else {
             return SearchWidget(
               size: size,

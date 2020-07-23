@@ -115,7 +115,7 @@ class _HomeScreenState extends State<HomeScreen> {
           builder: (context, state) {
             if (state is ModelLoaded) {
               AqiHelper helper = AqiHelper(state.model);
-              
+
               return ListView(
                 shrinkWrap: true,
                 primary: false,
@@ -141,7 +141,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 title: 'Please check your internet connection and try again.',
               );
             } else {
-              return LoadingIndicator(size: size);
+              return LoadingIndicator();
             }
           },
         ),

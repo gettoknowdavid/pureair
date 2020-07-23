@@ -51,13 +51,15 @@ class DominantPollutant extends StatelessWidget {
             ),
           ],
         ),
-        SizedBox(height: 10),
-        Text(
+        SizedBox(height: 5),
+        AutoSizeText(
           helper.healthRisk,
           softWrap: true,
           maxLines: 4,
+          minFontSize: 14,
           textAlign: TextAlign.start,
           style: textTheme.headline6.copyWith(
+            fontSize: 16,
             fontWeight: FontWeight.w400,
             letterSpacing: 1.2,
           ),

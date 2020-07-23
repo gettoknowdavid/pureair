@@ -47,6 +47,7 @@ dependencies:
   fl_chart: ^0.10.1
   google_maps_flutter: ^0.5.28+1
   flutter_google_places: ^0.2.5
+  splashscreen: ^1.2.0
   location: ^3.0.2
   latlong: ^0.6.1
   geolocator:
@@ -110,6 +111,7 @@ flutter:
     - images/park.png
     - images/heart.png
     - images/cycling.png
+    - images/appicon.png
 
 
   # An image asset can refer to one or more resolution-specific "variants", see

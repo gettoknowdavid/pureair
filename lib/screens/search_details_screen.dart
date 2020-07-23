@@ -33,9 +33,7 @@ class _SearchDetailsScreenState extends State<SearchDetailsScreen> {
         if (state is SearchDetailsLoaded) {
           return DetailsScreen(model: state.model);
         } else if (state is SearchDetailsLoading) {
-          return LoadingIndicator(
-            size: MediaQuery.of(context).size,
-          );
+          return LoadingIndicator();
         } else {
           return ErrorScreen(
             size: MediaQuery.of(context).size,
