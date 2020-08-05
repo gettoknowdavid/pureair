@@ -19,7 +19,7 @@ class AqiWidget extends StatefulWidget {
     Key key,
     @required this.model,
     @required this.width,
-    @required this.height,
+    this.height,
     this.helper,
   }) : super(key: key);
   @override
@@ -27,6 +27,8 @@ class AqiWidget extends StatefulWidget {
 }
 
 class _AqiWidgetState extends State<AqiWidget> {
+  Size get size => MediaQuery.of(context).size;
+
   TextTheme get textTheme => Theme.of(context).textTheme;
 
   Widget onBottom(Widget child) {
@@ -125,13 +127,40 @@ class _AqiWidgetState extends State<AqiWidget> {
     );
   }
 
+  Widget get _buildDetailsButton {
+    return Container(
+      margin: EdgeInsets.only(bottom: 60),
+      child: MaterialButton(
+        color: widget.helper.color.withOpacity(0.9),
+        padding: EdgeInsets.symmetric(horizontal: 60, vertical: 16),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(26),
+        ),
+        onPressed: () {
+          Navigator.of(context).push(
+            FadePageRoute(
+              widget: DetailsScreen(model: widget.model),
+            ),
+          );
+        },
+        child: Text(
+          'MORE',
+          style: textTheme.bodyText1.copyWith(
+            letterSpacing: 3,
+            color: widget.helper.backgroundColor,
+          ),
+        ),
+      ),
+    );
+  }
+
   Stack get _buildStack {
     return Stack(
       fit: StackFit.passthrough,
       alignment: Alignment.bottomCenter,
       children: <Widget>[
         onBottom(AnimatedWave(
-          height: widget.height * 0.65,
+          height: size.height * 0.65,
           speed: 1.0,
         )),
         Column(
@@ -142,16 +171,17 @@ class _AqiWidgetState extends State<AqiWidget> {
             Spacer(),
             _buildLocation,
             _buildDate,
-            Spacer(),
+            SizedBox(height: 50),
+            _buildDetailsButton,
           ],
         ),
         onBottom(AnimatedWave(
-          height: widget.height * 0.5,
+          height: size.height * 0.5,
           speed: 0.9,
           offset: pi,
         )),
         onBottom(AnimatedWave(
-          height: widget.height * 0.58,
+          height: size.height * 0.58,
           speed: 1.2,
           offset: pi / 2,
         )),
@@ -163,30 +193,11 @@ class _AqiWidgetState extends State<AqiWidget> {
   Widget build(BuildContext context) {
     AqiHelper helper = AqiHelper(widget.model);
 
-    return GestureDetector(
-      onTap: () {
-        Navigator.of(context).push(
-          FadePageRoute(widget: DetailsScreen(model: widget.model)),
-        );
-      },
-      child: Container(
-        margin: EdgeInsets.symmetric(horizontal: 16),
-        child: Material(
-          borderRadius: BorderRadius.circular(60),
-          elevation: 20,
-          shadowColor: Colors.black38,
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(60),
-            child: Container(
-              height: widget.height,
-              width: widget.width,
-              color: helper.backgroundColor,
-              alignment: Alignment.bottomCenter,
-              child: _buildStack,
-            ),
-          ),
-        ),
-      ),
+    return Container(
+      width: widget.width,
+      color: helper.backgroundColor,
+      alignment: Alignment.bottomCenter,
+      child: _buildStack,
     );
   }
 }

@@ -43,7 +43,7 @@ class PureAirAppBar extends StatelessWidget implements PreferredSizeWidget {
                 leading ??
                     ImageIcon(
                       AssetImage('images/water.png'),
-                      color: colorScheme.secondary,
+                      color: colorScheme.primary,
                     ),
                 actions ?? Container(),
               ],
@@ -53,7 +53,10 @@ class PureAirAppBar extends StatelessWidget implements PreferredSizeWidget {
               width: width * 0.5,
               child: Text(
                 title.toUpperCase(),
-                style: textTheme.headline6.copyWith(letterSpacing: 2.0),
+                style: textTheme.headline6.copyWith(
+                  letterSpacing: 2.0,
+                  color: colorScheme.onBackground,
+                ),
               ),
             ),
           ],

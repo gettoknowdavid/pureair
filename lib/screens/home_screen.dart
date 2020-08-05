@@ -6,11 +6,14 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:pureair/blocs/model/model_bloc.dart';
+import 'package:pureair/screens/favourites_screen.dart';
 import 'package:pureair/src/core/aqi_helper.dart';
 import 'package:pureair/src/core/db_repository.dart';
-import 'package:pureair/widgets/air_purifier_image.dart';
+import 'package:pureair/src/core/pureair_dao.dart';
+import 'package:pureair/src/model/aqi.dart';
 import 'package:pureair/widgets/aqi_widget.dart';
 import 'package:pureair/widgets/check_connection_widget.dart';
+import 'package:pureair/widgets/dot_indicator.dart';
 import 'package:pureair/widgets/error_screen.dart';
 import 'package:pureair/widgets/loading_indicator.dart';
 
@@ -28,6 +31,14 @@ class _HomeScreenState extends State<HomeScreen> {
   Size get size => MediaQuery.of(context).size;
   final Connectivity _connectivity = Connectivity();
 
+  PageController _controller = PageController(
+    initialPage: 0,
+  );
+
+  static const _kDuration = const Duration(milliseconds: 300);
+
+  static const _kCurve = Curves.ease;
+
   @override
   void initState() {
     super.initState();
@@ -38,11 +49,11 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   void dispose() {
+    _controller.dispose();
     _connSubscription.cancel();
     super.dispose();
   }
 
-  DbRepository repo = DbRepository();
 
   Future<void> _updateConnStatus(ConnectivityResult result) async {
     if (result == ConnectivityResult.none) {
@@ -97,7 +108,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
 
-    final aqiWidgetHeight = size.height * 0.6;
+    // final aqiWidgetHeight = size.height;
     final aqiWidgetWidth = size.width;
 
     return Scaffold(
@@ -107,7 +118,7 @@ class _HomeScreenState extends State<HomeScreen> {
         controller: _refreshController,
         enablePullDown: true,
         onRefresh: () async {
-          await Future.delayed(Duration(seconds: 1));
+          // await Future.delayed(Duration(seconds: 1));
           await refresher;
           _refreshController.refreshCompleted();
         },
@@ -116,22 +127,45 @@ class _HomeScreenState extends State<HomeScreen> {
             if (state is ModelLoaded) {
               AqiHelper helper = AqiHelper(state.model);
 
-              return ListView(
-                shrinkWrap: true,
-                primary: false,
-                padding: EdgeInsets.symmetric(vertical: 16),
+              return Stack(
                 children: <Widget>[
-                  AqiWidget(
-                    model: state.model,
-                    helper: helper,
-                    height: aqiWidgetHeight,
-                    width: aqiWidgetWidth,
+                  PageView(
+                    physics: AlwaysScrollableScrollPhysics(),
+                    controller: _controller,
+                    children: <Widget>[
+                      AqiWidget(
+                        model: state.model,
+                        helper: helper,
+                        height: double.infinity,
+                        width: aqiWidgetWidth,
+                      ),
+                      FavouritesScreen(
+                        height: double.infinity,
+                        width: aqiWidgetWidth,
+                      ),
+                    ],
                   ),
-                  SizedBox(height: 40),
-                  AirPurifierImage(
-                    size: size,
-                    height: aqiWidgetHeight,
-                    width: aqiWidgetWidth,
+                  Positioned(
+                    bottom: 0.0,
+                    left: 0.0,
+                    right: 0.0,
+                    child: Container(
+                      padding: const EdgeInsets.all(20.0),
+                      child: Center(
+                        child: DotsIndicator(
+                          controller: _controller,
+                          itemCount: 2,
+                          color: helper.color.withOpacity(0.3),
+                          onPageSelected: (int page) {
+                            _controller.animateToPage(
+                              page,
+                              duration: _kDuration,
+                              curve: _kCurve,
+                            );
+                          },
+                        ),
+                      ),
+                    ),
                   ),
                 ],
               );
@@ -145,6 +179,75 @@ class _HomeScreenState extends State<HomeScreen> {
             }
           },
         ),
+      ),
+    );
+  }
+}
+
+class BS extends StatefulWidget {
+  _BS createState() => _BS();
+}
+
+class _BS extends State<BS> {
+  bool _showSecond = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return BottomSheet(
+      onClosing: () {},
+      builder: (BuildContext context) => AnimatedContainer(
+        margin: EdgeInsets.all(20),
+        decoration: BoxDecoration(
+            color: Colors.white, borderRadius: BorderRadius.circular(30)),
+        child: AnimatedCrossFade(
+            firstChild: Container(
+              constraints: BoxConstraints.expand(
+                  height: MediaQuery.of(context).size.height - 200),
+//remove constraint and add your widget hierarchy as a child for first view
+              padding: EdgeInsets.all(20),
+              child: Align(
+                alignment: Alignment.bottomCenter,
+                child: RaisedButton(
+                  onPressed: () => setState(() => _showSecond = true),
+                  padding: EdgeInsets.all(15),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10)),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Text("Suivant"),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            secondChild: Container(
+              constraints: BoxConstraints.expand(
+                  height: MediaQuery.of(context).size.height / 3),
+//remove constraint and add your widget hierarchy as a child for second view
+              padding: EdgeInsets.all(20),
+              child: Align(
+                alignment: Alignment.bottomCenter,
+                child: RaisedButton(
+                  onPressed: () => setState(() => _showSecond = false),
+                  color: Colors.green,
+                  padding: EdgeInsets.all(15),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10)),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Text("ok"),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            crossFadeState: _showSecond
+                ? CrossFadeState.showSecond
+                : CrossFadeState.showFirst,
+            duration: Duration(milliseconds: 400)),
+        duration: Duration(milliseconds: 400),
       ),
     );
   }

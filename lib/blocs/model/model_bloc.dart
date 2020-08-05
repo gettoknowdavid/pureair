@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:pureair/src/core/db_repository.dart';
+import 'package:pureair/src/core/pureair_dao.dart';
 import 'package:pureair/src/core/repository.dart';
 import 'package:pureair/src/model/aqi.dart';
 
@@ -12,6 +14,9 @@ class ModelBloc extends Bloc<ModelEvent, ModelState> {
   ModelBloc(this.repository) : super(ModelLoading());
 
   final Repository repository;
+
+  Dao dao = Dao();
+  DbRepository repo = DbRepository();
 
   @override
   Stream<ModelState> mapEventToState(
@@ -35,13 +40,10 @@ class ModelBloc extends Bloc<ModelEvent, ModelState> {
   }
 
   Stream<ModelState> _mapRefreshToState() async* {
-    try {
-      Aqi model = await repository.fetchModel;
+    yield ModelLoading();
+    Aqi model = await repository.fetchModel;
 
-      yield ModelLoaded(model);
-      await repository.saveModel(model);
-    } catch (_) {
-      yield ModelNotLoaded();
-    }
+    yield ModelLoaded(model);
+    await repository.saveModel(model);
   }
 }

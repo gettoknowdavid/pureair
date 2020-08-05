@@ -1,12 +1,13 @@
 import 'package:auto_size_text/auto_size_text.dart';
-import 'package:autocomplete_textfield/autocomplete_textfield.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:pureair/blocs/favourites/favourites_bloc.dart';
+import 'package:pureair/blocs/model/model_bloc.dart';
 import 'package:pureair/blocs/search/search_bloc.dart';
 import 'package:pureair/src/core/db_repository.dart';
+import 'package:pureair/src/model/search_model/geo.dart';
 import 'package:pureair/src/model/search_model/search_data.dart';
 import 'package:pureair/widgets/loading_indicator.dart';
-import 'package:pureair/widgets/pureair_expansion_tile.dart';
 import 'package:pureair/widgets/search_result_item.dart';
 import 'package:pureair/widgets/search_textfield.dart';
 
@@ -20,13 +21,14 @@ class _SearchScreenState extends State<SearchScreen> {
   Size get size => MediaQuery.of(context).size;
   TextEditingController textController = TextEditingController();
   SearchBloc get searchBloc => BlocProvider.of<SearchBloc>(context);
+  FavouritesBloc get favouritesBloc => BlocProvider.of<FavouritesBloc>(context);
+  ModelBloc get modelBloc => BlocProvider.of<ModelBloc>(context);
   ThemeData get theme => Theme.of(context);
 
-  AutoCompleteTextField searchTextField;
   DbRepository repository = DbRepository();
   List<SearchData> list = [];
 
-  final GlobalKey<PureAirExpansionTileState> expansionTile = new GlobalKey();
+  bool isFavourite = false;
 
   @override
   void initState() {
@@ -42,7 +44,6 @@ class _SearchScreenState extends State<SearchScreen> {
 
     return Scaffold(
       key: _scaffoldKey,
-      // backgroundColor: Color(0xFFF2F2F2),
       body: BlocBuilder<SearchBloc, SearchState>(
         builder: (context, state) {
           if (state is SearchLoaded) {
@@ -112,10 +113,23 @@ class _SearchScreenState extends State<SearchScreen> {
                             itemCount: state.searchAqi.data.length,
                             itemBuilder: (context, index) {
                               final data = state.searchAqi.data[index];
+                              Geo geo = Geo(
+                                lat: data.station.geo[0],
+                                lon: data.station.geo[1],
+                              );
 
                               return SearchResultItem(
                                 size: size,
                                 searchData: data,
+                                onFavourite: () {
+                                  favouritesBloc
+                                    ..add(
+                                      AddFavourite(
+                                        geo,
+                                        key: _scaffoldKey,
+                                      ),
+                                    );
+                                },
                               );
                             },
                           ),

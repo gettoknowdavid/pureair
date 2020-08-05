@@ -29,3 +29,15 @@ class RecentCity extends SearchEvent {
   List<Object> get props => [city, uid];
 }
 
+
+
+class AddStation extends SearchEvent {
+  final double lat;
+  final double lon;
+
+  AddStation(this.lat, this.lon);
+
+  @override
+  List<Object> get props => [lat, lon];
+}
+

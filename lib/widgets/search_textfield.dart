@@ -49,9 +49,8 @@ class SearchTaxtField extends StatelessWidget {
         borderRadius: BorderRadius.all(Radius.circular(16)),
         child: Container(
           width: size.width,
-          decoration: BoxDecoration(
-            color: colorScheme.onBackground.withOpacity(0.3),
-          ),
+          color: colorScheme.onBackground.withOpacity(0.1),
+
           // padding: EdgeInsets.only(left: 26),
           // margin: EdgeInsets.symmetric(horizontal: 20),
           child: Row(
@@ -59,7 +58,7 @@ class SearchTaxtField extends StatelessWidget {
               Expanded(
                 child: Form(
                   key: _formKey,
-                  child: TextFormField(
+                  child: TextField(
                     focusNode: FocusNode(),
                     textCapitalization: TextCapitalization.sentences,
                     keyboardType: TextInputType.text,
@@ -69,6 +68,10 @@ class SearchTaxtField extends StatelessWidget {
                       fontWeight: FontWeight.w400,
                       fontSize: 22,
                     ),
+                    onSubmitted: (value) {
+                      _search();
+                    },
+                    textInputAction: TextInputAction.search,
                     decoration: InputDecoration(
                       // errorText: validateText(textController.text),
                       contentPadding: EdgeInsets.all(20),
@@ -109,7 +112,7 @@ class SearchTaxtField extends StatelessWidget {
                 },
                 child: Container(
                   padding: EdgeInsets.all(20),
-                  color: colorScheme.secondary,
+                  color: colorScheme.primary,
                   child: Icon(
                     Icons.search,
                     color: colorScheme.onSecondary,

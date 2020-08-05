@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pureair/blocs/tabs/tabs_bloc.dart';
+import 'package:pureair/screens/favourites_screen.dart';
+import 'package:pureair/screens/home_screen.dart';
 import 'package:pureair/screens/screen_widget.dart';
+import 'package:pureair/screens/search_screen.dart';
 import 'package:pureair/src/model/screen.dart';
+import 'package:pureair/widgets/fade_page_route.dart';
 import 'package:pureair/widgets/pureair_app_bar.dart';
 import 'package:pureair/widgets/pureair_bottom_nav_bar.dart';
 
@@ -51,8 +55,8 @@ class _ScreenControllerState extends State<ScreenController> {
         PureBottomBarItem(
           icon: _icons(screen),
           title: _titles(screen),
-          activeColor: colorScheme.onBackground,
-          inactiveColor: colorScheme.onBackground.withOpacity(0.5),
+          activeColor: colorScheme.primary,
+          inactiveColor: colorScheme.onBackground.withOpacity(0.4),
           textAlign: TextAlign.end,
         ),
       );
@@ -65,12 +69,12 @@ class _ScreenControllerState extends State<ScreenController> {
     final theme = Theme.of(context);
 
     Color mainColor =
-        theme.brightness == Brightness.light ? Colors.white : Colors.black;
+        theme.brightness == Brightness.light ? colorScheme.background : Colors.black;
 
     return MediaQuery(
       data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
       child: BlocBuilder<TabsBloc, TabsState>(
-        bloc: context.bloc<TabsBloc>(),
+        cubit: context.bloc<TabsBloc>(),
         builder: (context, state) {
           final selectedIndex = Screen.values.indexOf(state.widget.screen);
           return Scaffold(
@@ -88,6 +92,16 @@ class _ScreenControllerState extends State<ScreenController> {
             appBar: PureAirAppBar(
               title: state.widget.title,
               color: mainColor,
+              actions: IconButton(
+                icon: Icon(Icons.favorite_border),
+                color: colorScheme.primary,
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    FadePageRoute(widget: FavouritesScreen()),
+                  );
+                },
+              ),
             ),
             bottomNavigationBar: PureAirBottomNavBar(
               size: size,
@@ -103,4 +117,3 @@ class _ScreenControllerState extends State<ScreenController> {
     );
   }
 }
-

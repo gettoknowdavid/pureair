@@ -11,10 +11,14 @@ class SearchResultItem extends StatefulWidget {
     Key key,
     @required this.size,
     @required this.searchData,
+    this.isFavourite,
+    this.onFavourite,
   }) : super(key: key);
 
   final Size size;
   final SearchData searchData;
+  final bool isFavourite;
+  final VoidCallback onFavourite;
 
   @override
   _SearchResultItemState createState() => _SearchResultItemState();
@@ -52,13 +56,13 @@ class _SearchResultItemState extends State<SearchResultItem> {
       child: Container(
         height: mainContainerHeight,
         width: mainContainerWidth,
-        // padding: EdgeInsets.symmetric(vertical: 8, horizontal: 20),
         margin: EdgeInsets.only(top: 26),
-// alignment: Alignment.centerLeft,
         child: Material(
           elevation: 12,
           shadowColor: Colors.black38,
-          color: colorScheme.background,
+          color: theme.brightness == Brightness.light
+              ? Colors.white
+              : theme.primaryColor,
           borderRadius: BorderRadius.circular(mainRadius),
           child: Container(
             padding: EdgeInsets.symmetric(horizontal: 20),
@@ -129,6 +133,10 @@ class _SearchResultItemState extends State<SearchResultItem> {
                       ),
                     ),
                   ),
+                ),
+                IconButton(
+                  icon: Icon(Icons.favorite_border),
+                  onPressed: widget.onFavourite,
                 ),
               ],
             ),

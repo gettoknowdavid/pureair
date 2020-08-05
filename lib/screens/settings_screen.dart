@@ -26,8 +26,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
         Icons.chevron_right,
         size: 30,
         color: enabled
-            ? colorScheme.secondary
-            : colorScheme.secondary.withOpacity(0.3),
+            ? colorScheme.primary
+            : colorScheme.primary.withOpacity(0.2),
       );
       return Container(
         padding: const EdgeInsets.only(bottom: 8.0),
@@ -189,7 +189,7 @@ class SelectTheme extends StatelessWidget {
               trailing: isSelected
                   ? Icon(
                       Icons.check,
-                      color: colorScheme.secondary,
+                      color: colorScheme.primary,
                     )
                   : null,
               onTap: () {
@@ -211,7 +211,7 @@ class SelectTheme extends StatelessWidget {
               trailing: !isSelected
                   ? Icon(
                       Icons.check,
-                      color: colorScheme.secondary,
+                      color: colorScheme.primary,
                     )
                   : null,
               onTap: () {

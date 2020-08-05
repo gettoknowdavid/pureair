@@ -9,12 +9,3 @@ abstract class ModelEvent extends Equatable {
 class LoadModel extends ModelEvent {}
 
 class RefreshModel extends ModelEvent {}
-
-class SearchModel extends ModelEvent {
-  final String city;
-
-  SearchModel(this.city);
-
-  @override
-  List<Object> get props => [];
-}

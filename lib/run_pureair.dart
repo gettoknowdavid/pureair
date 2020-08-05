@@ -2,6 +2,7 @@ import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pureair/app.dart';
+import 'package:pureair/blocs/favourites/favourites_bloc.dart';
 import 'package:pureair/blocs/model/model_bloc.dart';
 import 'package:pureair/blocs/pureair_observer.dart';
 import 'package:pureair/blocs/search/search_bloc.dart';
@@ -29,6 +30,11 @@ void runPureAir(Repository repository) async {
         BlocProvider(
           create: (context) {
             return SearchDetailsBloc();
+          },
+        ),
+       BlocProvider(
+          create: (context) {
+            return FavouritesBloc();
           },
         ),
       ],

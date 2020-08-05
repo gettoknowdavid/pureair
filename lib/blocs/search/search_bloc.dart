@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:pureair/src/core/db_repository.dart';
 import 'package:pureair/src/core/repository.dart';
 import 'package:pureair/src/model/search_model/search_aqi.dart';
 
@@ -12,6 +13,8 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
   SearchBloc(this.repository) : super(SearchCleared());
 
   final Repository repository;
+
+  DbRepository repo = DbRepository();
 
   @override
   Stream<SearchState> mapEventToState(
@@ -30,4 +33,5 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
       yield SearchCleared();
     }
   }
+
 }

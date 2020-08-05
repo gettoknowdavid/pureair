@@ -28,7 +28,7 @@ class _SearchDetailsScreenState extends State<SearchDetailsScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<SearchDetailsBloc, SearchDetailsState>(
-      bloc: bloc,
+      cubit: bloc,
       builder: (context, state) {
         if (state is SearchDetailsLoaded) {
           return DetailsScreen(model: state.model);

@@ -14,14 +14,14 @@ const Color _primary = const Color(0xFF0460D9);
 const Color _primaryVariant = const Color(0xFF0476D9);
 const Color _secondary = const Color(0xFFF24F13);
 const Color _secondaryVariant = const Color(0xFF1E3E59);
-const Color _onPrimary = const Color(0xFFF2F2F2);
-const Color _onSecondary = const Color(0xFFF2F2F2);
+const Color _onPrimary = const Color(0xFFF0F5FD);
+const Color _onSecondary = const Color(0xFFF0F5FD);
 const Color _onBackground = const Color(0xFF1E3E59);
 const Color _onSurface = const Color(0xFF1E3E59);
 const Color _error = const Color(0xFF1E3E59);
-const Color _onError = const Color(0xFFF2F2F2);
-const Color _background = const Color(0xFFF2F2F2);
-const Color _surface = const Color(0xFFF2F2F2);
+const Color _onError = const Color(0xFFF0F5FD);
+const Color _background = const Color(0xFFF0F5FD);
+const Color _surface = const Color(0xFFF0F5FD);
 
 // final ThemeData kLightTheme = _buildLightTheme;
 
@@ -46,7 +46,7 @@ ThemeData get _buildLightTheme {
       brightness: Brightness.light,
     ),
     dividerColor: _secondaryVariant.withOpacity(0.1),
-    scaffoldBackgroundColor: _background,
+    scaffoldBackgroundColor: Colors.white,
     bottomAppBarColor: Colors.transparent,
     dividerTheme: dividerTheme,
     textTheme: _textTheme(base.textTheme),
@@ -62,6 +62,8 @@ ThemeData get _buildDarkTheme {
   return base.copyWith(
     // scaffoldBackgroundColor: Colors.grey[400],
     colorScheme: ColorScheme.dark().copyWith(
+      primary: _primary,
+      onPrimary: _onPrimary,
       secondary: _secondary,
       onSecondary: _onSecondary,
     ),
