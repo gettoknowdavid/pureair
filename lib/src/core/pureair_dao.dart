@@ -49,9 +49,9 @@ class Dao {
     }
   }
 
-  Future<List<Aqi>> fetchFavs(List<Geo> stations) async {
+  Future<List<Aqi>> fetchFavs(List<Geo> geos) async {
     final responses = await Future.wait(
-      stations
+      geos
           .map(
             (e) => http.Client().get(
               'https://api.waqi.info/feed/geo:${e.lat.toString()};${e.lon.toString()}/?token=40ed6f6141a5da95083e7aa28ba7658e70bb90f6',

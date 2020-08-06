@@ -40,7 +40,6 @@ class ModelBloc extends Bloc<ModelEvent, ModelState> {
   }
 
   Stream<ModelState> _mapRefreshToState() async* {
-    yield ModelLoading();
     Aqi model = await repository.fetchModel;
 
     yield ModelLoaded(model);

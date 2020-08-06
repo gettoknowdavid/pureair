@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:pureair/blocs/theme/theme_bloc.dart';
-import 'package:pureair/themes.dart';
+import 'package:pureair/blocs/situation/situation_bloc.dart';
+import 'package:pureair/screens/select_theme.dart';
+import 'package:pureair/src/model/situation.dart';
 import 'package:pureair/widgets/custom_back_button.dart';
 import 'package:pureair/widgets/pureair_app_bar.dart';
 import 'package:sticky_headers/sticky_headers.dart';
@@ -69,9 +70,22 @@ class _SettingsScreenState extends State<SettingsScreen> {
             _CustomListTile(
               header: 'PREFERENCES',
               content: <Widget>[
-                _buildListTile('Recommendations'),
-                _buildListTile('Units'),
-                _buildListTile('Sensitivity'),
+                _buildListTile(
+                  'Health Condition',
+                  enabled: true,
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => SelectHealthCondition(),
+                      ),
+                    );
+                  },
+                ),
+                _buildListTile(
+                  'Units',
+                  enabled: true,
+                ),
                 _buildListTile(
                   'Theme',
                   enabled: true,
@@ -160,7 +174,7 @@ class _CustomListTile extends StatelessWidget {
   }
 }
 
-class SelectTheme extends StatelessWidget {
+class SelectHealthCondition extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
@@ -168,62 +182,92 @@ class SelectTheme extends StatelessWidget {
     final listTilePadding = EdgeInsets.symmetric(
       vertical: 6,
     );
-    bool isSelected = Theme.of(context).brightness == Brightness.light;
 
-    return MediaQuery(
-      data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
-      child: Scaffold(
-        appBar: PureAirAppBar(leading: PureAirBackButton()),
-        body: ListView(
-          padding: EdgeInsets.symmetric(horizontal: 24),
-          children: <Widget>[
-            ListTile(
-              title: Text(
-                'Light Theme',
-                style: textTheme.headline5.copyWith(
-                  fontWeight: FontWeight.w600,
-                  color: colorScheme.onBackground,
-                ),
-              ),
-              contentPadding: listTilePadding,
-              trailing: isSelected
-                  ? Icon(
-                      Icons.check,
-                      color: colorScheme.primary,
-                    )
-                  : null,
-              onTap: () {
-                context.bloc<ThemeBloc>().add(
-                      ChangeTheme(ThemeEnum.lightTheme),
-                    );
-              },
-            ),
-            Divider(),
-            ListTile(
-              title: Text(
-                'Dark Theme',
-                style: textTheme.headline5.copyWith(
-                  fontWeight: FontWeight.w600,
-                  color: colorScheme.onBackground,
-                ),
-              ),
-              contentPadding: listTilePadding,
-              trailing: !isSelected
-                  ? Icon(
-                      Icons.check,
-                      color: colorScheme.primary,
-                    )
-                  : null,
-              onTap: () {
-                context.bloc<ThemeBloc>()
-                  ..add(
-                    ChangeTheme(ThemeEnum.darkTheme),
-                  );
-              },
-            ),
-          ],
+    ListTile _buildListTile(SituationEnum situation,
+        {bool isSelected: false, VoidCallback onTap}) {
+      return ListTile(
+        title: Text(
+          enumToString(situation),
+          style: textTheme.headline5.copyWith(
+            fontWeight: FontWeight.w600,
+            color: colorScheme.onBackground,
+          ),
         ),
-      ),
+        contentPadding: listTilePadding,
+        trailing: isSelected
+            ? Icon(
+                Icons.check,
+                color: colorScheme.primary,
+              )
+            : null,
+        onTap: onTap,
+      );
+    }
+
+    return BlocBuilder<SituationBloc, SituationState>(
+      builder: (context, state) {
+        return MediaQuery(
+          data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
+          child: Scaffold(
+            appBar: PureAirAppBar(leading: PureAirBackButton()),
+            body: ListView.builder(
+              padding: EdgeInsets.symmetric(horizontal: 24),
+              itemCount: SituationEnum.values.length,
+              itemBuilder: (context, index) {
+                return _buildListTile(
+                  SituationEnum.values[index],
+                  isSelected: (state as SituationLoaded).situation ==
+                      SituationEnum.values[index],
+                  onTap: () {
+                    context.bloc<SituationBloc>()
+                      ..add(
+                        UpdateSituation(
+                          SituationEnum.values[index],
+                        ),
+                      );
+                  },
+                );
+              },
+            ),
+            // body: ListView(
+            //   padding: EdgeInsets.symmetric(horizontal: 24),
+            //   children: <Widget>[
+            //     _buildListTile('Asthma'),
+            //     Divider(),
+            //     _buildListTile('Bronchitis'),
+            //     Divider(),
+            //     _buildListTile('Lung Cancer'),
+            //     Divider(),
+            //     _buildListTile('Emphysema'),
+            //     Divider(),
+            //     _buildListTile('High Blood Pressure'),
+            //   ],
+            // ),
+          ),
+        );
+      },
     );
   }
 }
+
+String enumToString(dynamic input) {
+  String name = input.toString().split('.').last;
+  // String firstLetter = name[0].toUpperCase();
+  // final otherLetters = name.split(name[0]);
+  if (name == 'asthma')
+    return 'Asthma';
+  else if (name == 'bronchitis')
+    return 'Bronchitis';
+  else if (name == 'emphysema')
+    return 'Emphysema';
+  else if (name == 'lungCancer')
+    return 'Lung Cancer';
+  else if (name == 'hbp')
+    return 'High Blood Pressure';
+  else
+    return 'None';
+}
+// String enumFormatter(dynamic input) {
+//   final name = enumToString(input);
+//   if ()
+// }

@@ -8,7 +8,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:pureair/blocs/favourites/favourites_bloc.dart';
-import 'package:pureair/blocs/favourites/favourites_bloc.dart';
+import 'package:pureair/blocs/situation/situation_bloc.dart';
 import 'package:pureair/screens/details_screen.dart';
 import 'package:pureair/src/core/aqi_helper.dart';
 import 'package:pureair/src/model/data.dart';
@@ -22,8 +22,14 @@ import 'package:pureair/widgets/pureair_app_bar.dart';
 class FavouritesScreen extends StatefulWidget {
   final double width;
   final double height;
+  final bool showAppBar;
 
-  const FavouritesScreen({Key key, this.width, this.height}) : super(key: key);
+  const FavouritesScreen({
+    Key key,
+    this.width,
+    this.height,
+    this.showAppBar: true,
+  }) : super(key: key);
 
   @override
   _FavouritesScreenState createState() => _FavouritesScreenState();
@@ -38,7 +44,6 @@ class _FavouritesScreenState extends State<FavouritesScreen> {
   Size get size => MediaQuery.of(context).size;
   final Connectivity _connectivity = Connectivity();
 
-  Completer<void> _refreshCompleter;
 
   @override
   void initState() {
@@ -48,7 +53,6 @@ class _FavouritesScreenState extends State<FavouritesScreen> {
         _connectivity.onConnectivityChanged.listen(_updateConnStatus);
     refresher;
 
-    _refreshCompleter = Completer<void>();
   }
 
   @override
@@ -111,16 +115,13 @@ class _FavouritesScreenState extends State<FavouritesScreen> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    final textTheme = Theme.of(context).textTheme;
     final colorScheme = Theme.of(context).colorScheme;
 
-    final mainContainerHeight = size.height * 0.16;
-    final aqiContainerSize = mainContainerHeight * 0.6;
 
     return Scaffold(
       key: _scaffoldKey,
       backgroundColor: colorScheme.background,
-      appBar: PureAirAppBar(
+      appBar:widget.showAppBar? PureAirAppBar(
         leading: PureAirBackButton(),
         title: 'FAVOURITES',
         actions: IconButton(
@@ -133,10 +134,10 @@ class _FavouritesScreenState extends State<FavouritesScreen> {
             });
           },
         ),
-      ),
-      body: BlocBuilder<FavouritesBloc, FavouritesState>(
+      ): null,
+      body: BlocBuilder<SituationBloc, SituationState>(
         builder: (context, state) {
-          if (state is FavouritesLoaded) {
+          if (state is SituationLoaded) {
             return SmartRefresher(
               controller: _refreshController,
               enablePullDown: true,
@@ -181,7 +182,7 @@ class _FavouritesScreenState extends State<FavouritesScreen> {
                 },
               ),
             );
-          } else if (state is FavouritesLoading) {
+          } else if (state is SituationLoading) {
             return LoadingIndicator();
           } else {
             return Container(
