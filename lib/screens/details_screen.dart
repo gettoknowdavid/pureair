@@ -89,10 +89,11 @@ class _LocationAndTip extends StatelessWidget {
     Text _buidLocation(TextTheme textTheme) {
       return Text(
         '${model.data.city.name}'.toUpperCase(),
-        maxLines: 1,
+        maxLines: 3,
         softWrap: true,
         overflow: TextOverflow.ellipsis,
         style: textTheme.headline6.copyWith(
+          fontSize: 16,
           letterSpacing: 3,
           fontWeight: FontWeight.w600,
           color: colorScheme.onBackground.withOpacity(0.8),

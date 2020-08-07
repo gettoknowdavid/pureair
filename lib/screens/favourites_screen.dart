@@ -8,7 +8,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:pureair/blocs/favourites/favourites_bloc.dart';
-import 'package:pureair/blocs/situation/situation_bloc.dart';
 import 'package:pureair/screens/details_screen.dart';
 import 'package:pureair/src/core/aqi_helper.dart';
 import 'package:pureair/src/model/data.dart';
@@ -44,7 +43,6 @@ class _FavouritesScreenState extends State<FavouritesScreen> {
   Size get size => MediaQuery.of(context).size;
   final Connectivity _connectivity = Connectivity();
 
-
   @override
   void initState() {
     super.initState();
@@ -52,7 +50,6 @@ class _FavouritesScreenState extends State<FavouritesScreen> {
     _connSubscription =
         _connectivity.onConnectivityChanged.listen(_updateConnStatus);
     refresher;
-
   }
 
   @override
@@ -117,27 +114,31 @@ class _FavouritesScreenState extends State<FavouritesScreen> {
     final size = MediaQuery.of(context).size;
     final colorScheme = Theme.of(context).colorScheme;
 
-
     return Scaffold(
       key: _scaffoldKey,
       backgroundColor: colorScheme.background,
-      appBar:widget.showAppBar? PureAirAppBar(
-        leading: PureAirBackButton(),
-        title: 'FAVOURITES',
-        actions: IconButton(
-          icon: !showRemoveButtons
-              ? Icon(Icons.cancel, color: Colors.red)
-              : Icon(Icons.edit),
-          onPressed: () {
-            setState(() {
-              showRemoveButtons = !showRemoveButtons;
-            });
-          },
-        ),
-      ): null,
-      body: BlocBuilder<SituationBloc, SituationState>(
+      appBar: widget.showAppBar
+          ? PureAirAppBar(
+              leading: PureAirBackButton(),
+              title: 'FAVOURITES',
+              actions: IconButton(
+                icon: !showRemoveButtons
+                    ? Icon(Icons.cancel, color: Colors.red)
+                    : Icon(Icons.edit),
+                onPressed: () {
+                  setState(() {
+                    showRemoveButtons = !showRemoveButtons;
+                  });
+                },
+              ),
+            )
+          : null,
+      body: BlocBuilder<FavouritesBloc, FavouritesState>(
         builder: (context, state) {
-          if (state is SituationLoaded) {
+          if (state is FavouritesLoaded) {
+            // final safeCities = state.safeCities;
+            // final flaggedCities = state.safeCities;
+
             return SmartRefresher(
               controller: _refreshController,
               enablePullDown: true,
@@ -153,6 +154,7 @@ class _FavouritesScreenState extends State<FavouritesScreen> {
                 itemCount: state.favourites.favModels.length,
                 itemBuilder: (context, index) {
                   final model = state.favourites.favModels[index];
+                  // print('FROM FAVOURITE SCREEN ${state.favModels.map((e) => e.data.city.name)}');
                   final data = model.data;
                   Geo geo = Geo(
                     lat: data.city.geo[0],
@@ -182,7 +184,7 @@ class _FavouritesScreenState extends State<FavouritesScreen> {
                 },
               ),
             );
-          } else if (state is SituationLoading) {
+          } else if (state is FavouritesLoading) {
             return LoadingIndicator();
           } else {
             return Container(
@@ -222,7 +224,7 @@ class FavouriteWidget extends StatelessWidget {
     final textTheme = Theme.of(context).textTheme;
     final colorScheme = Theme.of(context).colorScheme;
 
-    final mainContainerHeight = size.height * 0.14;
+    final mainContainerHeight = size.height * 0.17;
     final aqiContainerSize = mainContainerHeight * 0.5;
 
     return GestureDetector(
@@ -230,12 +232,7 @@ class FavouriteWidget extends StatelessWidget {
       child: Container(
         height: mainContainerHeight,
         width: size.width,
-        // padding: EdgeInsets.all(16),
         margin: EdgeInsets.fromLTRB(16, 0, 16, 20),
-        // decoration: BoxDecoration(
-        //   color: Colors.white,
-        //   borderRadius: BorderRadius.circular(20),
-        // ),
         child: Stack(
           children: <Widget>[
             Material(
@@ -269,6 +266,8 @@ class FavouriteWidget extends StatelessWidget {
                             overflow: TextOverflow.ellipsis,
                             style: textTheme.headline6,
                           ),
+                          SizedBox(height: 5),
+
                           Row(
                             children: <Widget>[
                               Text(

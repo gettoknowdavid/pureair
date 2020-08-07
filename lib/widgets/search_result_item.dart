@@ -58,7 +58,10 @@ class _SearchResultItemState extends State<SearchResultItem> {
         width: mainContainerWidth,
         margin: EdgeInsets.only(top: 26),
         child: Material(
-          elevation: 12,
+          elevation: widget.searchData.aqi.contains('-') ||
+                  widget.searchData.aqi == null
+              ? 0
+              : 12,
           shadowColor: Colors.black38,
           color: theme.brightness == Brightness.light
               ? Colors.white

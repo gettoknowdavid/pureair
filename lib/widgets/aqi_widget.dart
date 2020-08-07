@@ -130,25 +130,12 @@ class _AqiWidgetState extends State<AqiWidget> {
   Widget get _buildDetailsButton {
     return Container(
       margin: EdgeInsets.only(bottom: 60),
-      child: MaterialButton(
-        color: widget.helper.color.withOpacity(0.9),
-        padding: EdgeInsets.symmetric(horizontal: 60, vertical: 16),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(26),
-        ),
-        onPressed: () {
-          Navigator.of(context).push(
-            FadePageRoute(
-              widget: DetailsScreen(model: widget.model),
-            ),
-          );
-        },
-        child: Text(
-          'MORE',
-          style: textTheme.bodyText1.copyWith(
-            letterSpacing: 3,
-            color: widget.helper.backgroundColor,
-          ),
+      //
+      child: Text(
+        'TAP FOR MORE',
+        style: textTheme.bodyText1.copyWith(
+          letterSpacing: 3,
+          color: widget.helper.color,
         ),
       ),
     );
@@ -193,11 +180,20 @@ class _AqiWidgetState extends State<AqiWidget> {
   Widget build(BuildContext context) {
     AqiHelper helper = AqiHelper(widget.model);
 
-    return Container(
-      width: widget.width,
-      color: helper.backgroundColor,
-      alignment: Alignment.bottomCenter,
-      child: _buildStack,
+    return GestureDetector(
+      onTap: () {
+        Navigator.of(context).push(
+          FadePageRoute(
+            widget: DetailsScreen(model: widget.model),
+          ),
+        );
+      },
+      child: Container(
+        width: widget.width,
+        color: helper.backgroundColor,
+        alignment: Alignment.bottomCenter,
+        child: _buildStack,
+      ),
     );
   }
 }

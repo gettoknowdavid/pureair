@@ -7,7 +7,6 @@ import 'package:pureair/blocs/model/model_bloc.dart';
 import 'package:pureair/blocs/pureair_observer.dart';
 import 'package:pureair/blocs/search/search_bloc.dart';
 import 'package:pureair/blocs/search_details/search_details_bloc.dart';
-import 'package:pureair/blocs/situation/situation_bloc.dart';
 import 'package:pureair/blocs/tabs/tabs_bloc.dart';
 import 'package:pureair/src/core/repository.dart';
 
@@ -38,13 +37,13 @@ void runPureAir(Repository repository) async {
             return FavouritesBloc();
           },
         ),
-        BlocProvider(
-          create: (context) {
-            return SituationBloc(
-              favouritesBloc: context.bloc<FavouritesBloc>(),
-            );
-          },
-        ),
+        // BlocProvider(
+        //   create: (context) {
+        //     return SituationBloc(
+        //       favouritesBloc: context.bloc<FavouritesBloc>(),
+        //     );
+        //   },
+        // ),
       ],
       child: App(),
     ),

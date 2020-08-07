@@ -41,7 +41,6 @@ class FavouritesBloc extends Bloc<FavouritesEvent, FavouritesState> {
         Favourites favourites = Favourites(geos: geos, favModels: favModels);
         yield FavouritesLoaded(favourites);
         await repo.saveFavourites(favourites);
-        print('${favourites.geos}' + ':::::' + '${favourites.favModels}');
       } catch (_) {
         yield FavouritesNotLoaded();
       }
@@ -54,7 +53,7 @@ class FavouritesBloc extends Bloc<FavouritesEvent, FavouritesState> {
                 .map((e) => e.data.city.geo)
                 .toList()
                 .contains(event.geo)) {
-          print('Already added');
+          
           event.key.currentState.showSnackBar(
             SnackBar(
               content: Container(

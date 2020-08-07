@@ -5,7 +5,6 @@ import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' as http;
 import 'package:pureair/src/model/aqi.dart';
 import 'package:pureair/src/model/search_model/geo.dart';
-import 'package:pureair/src/model/search_model/saved_station.dart';
 import 'package:pureair/src/model/search_model/search_aqi.dart';
 
 class Dao {
