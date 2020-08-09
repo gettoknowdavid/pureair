@@ -31,7 +31,12 @@ class _SearchDetailsScreenState extends State<SearchDetailsScreen> {
       cubit: bloc,
       builder: (context, state) {
         if (state is SearchDetailsLoaded) {
-          return DetailsScreen(model: state.model);
+          return DetailsScreen(
+            model: state.model,
+            situation: state.situation,
+            message: state.message,
+            pollutants: state.pollutants,
+          );
         } else if (state is SearchDetailsLoading) {
           return LoadingIndicator();
         } else {

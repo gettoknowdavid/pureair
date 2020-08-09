@@ -1,6 +1,8 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:pureair/src/core/aqi_helper.dart';
 import 'package:pureair/src/model/aqi.dart';
+import 'package:pureair/widgets/pop_up_info_widget.dart';
 
 class PollutantWidget extends StatelessWidget {
   const PollutantWidget({
@@ -25,49 +27,61 @@ class PollutantWidget extends StatelessWidget {
 
     final containerSize = size.shortestSide * 0.159;
 
-    return Material(
-      color: backgroundColor ?? colorScheme.background,
-      // elevation: 20,
-      // shadowColor: Colors.black87,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-        side: value.toString().contains('-')
-            ? BorderSide.none
-            : BorderSide(color: colorScheme.onBackground.withOpacity(0.1)),
-      ),
-      child: Container(
-        height: containerSize.roundToDouble(),
-        width: containerSize.roundToDouble(),
-        // padding: EdgeInsets.symmetric(vertical: 10),
-        alignment: Alignment.center,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Spacer(),
-            Text(
-              title.toUpperCase(),
-              style: textTheme.bodyText2.copyWith(
-                color: textColor != null
-                    ? textColor.withOpacity(0.6)
-                    : textTheme.overline.color.withOpacity(0.6),
-                // fontSize: 16,
-                fontWeight: FontWeight.w700,
-                letterSpacing: 2,
+    return GestureDetector(
+      onTap: () {
+        print(title);
+        showDialog(
+          context: context,
+          barrierDismissible: true,
+          builder: (context) {
+            return PopUpInfoWidget(
+              size: size,
+              title: title,
+            );
+          },
+        );
+      },
+      child: Material(
+        color: backgroundColor ?? colorScheme.background,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+          side: value.toString().contains('-')
+              ? BorderSide.none
+              : BorderSide(color: colorScheme.onBackground.withOpacity(0.1)),
+        ),
+        child: Container(
+          height: containerSize.roundToDouble(),
+          width: containerSize.roundToDouble(),
+          alignment: Alignment.center,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Spacer(),
+              Text(
+                title.toUpperCase(),
+                style: textTheme.bodyText2.copyWith(
+                  color: textColor != null
+                      ? textColor.withOpacity(0.6)
+                      : textTheme.overline.color.withOpacity(0.6),
+                  // fontSize: 16,
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: 2,
+                ),
               ),
-            ),
-            Spacer(),
-            Text(
-              value.toString(),
-              maxLines: 1,
-              softWrap: true,
-              overflow: TextOverflow.ellipsis,
-              style: textTheme.headline5.copyWith(
-                color: textColor ?? colorScheme.onBackground,
-                fontWeight: FontWeight.w800,
+              Spacer(),
+              Text(
+                value.toString(),
+                maxLines: 1,
+                softWrap: true,
+                overflow: TextOverflow.ellipsis,
+                style: textTheme.headline5.copyWith(
+                  color: textColor ?? colorScheme.onBackground,
+                  fontWeight: FontWeight.w800,
+                ),
               ),
-            ),
-            Spacer(),
-          ],
+              Spacer(),
+            ],
+          ),
         ),
       ),
     );
@@ -100,14 +114,14 @@ class PollutantList extends StatelessWidget {
       children: <Widget>[
         PollutantWidget(
           size: size,
-          title: 'co',
+          title: 'CO',
           value: iaqi.co == null ? '-' : '${iaqi.co.v.round()}',
           backgroundColor: helper.coPollutantBgColor,
           textColor: helper.coTextColor,
         ),
         PollutantWidget(
           size: size,
-          title: 'no\u2082',
+          title: 'NO\u2082',
           value: iaqi.no2 == null ? '-' : '${iaqi.no2.v.round()}',
           backgroundColor: helper.no2PollutantBgColor,
           textColor: helper.no2TextColor,
@@ -121,21 +135,21 @@ class PollutantList extends StatelessWidget {
         ),
         PollutantWidget(
           size: size,
-          title: 'pm10',
+          title: 'PM10',
           value: iaqi.pm10 == null ? '-' : '${iaqi.pm10.v.round()}',
           backgroundColor: helper.pm10PollutantBgColor,
           textColor: helper.pm10TextColor,
         ),
         PollutantWidget(
           size: size,
-          title: 'pm2.5',
+          title: 'PM2.5',
           value: iaqi.pm25 == null ? '-' : '${iaqi.pm25.v.round()}',
           backgroundColor: helper.pm25PollutantBgColor,
           textColor: helper.pm25TextColor,
         ),
         PollutantWidget(
           size: size,
-          title: 'so\u2082',
+          title: 'SO\u2082',
           value: iaqi.so2 == null ? '-' : '${iaqi.so2.v.round()}',
           backgroundColor: helper.so2PollutantBgColor,
           textColor: helper.so2TextColor,

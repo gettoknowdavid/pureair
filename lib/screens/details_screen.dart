@@ -1,9 +1,12 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
+import 'package:pureair/screens/select_health_condition.dart';
 import 'package:pureair/src/core/aqi_helper.dart';
 import 'package:pureair/src/model/aqi.dart';
+import 'package:pureair/src/model/health_situation.dart';
 import 'package:pureair/widgets/custom_back_button.dart';
 import 'package:pureair/widgets/dominant_pollutant.dart';
+import 'package:pureair/widgets/fade_page_route.dart';
 import 'package:pureair/widgets/more_info_widget.dart';
 import 'package:pureair/widgets/pollutant_widget.dart';
 import 'package:pureair/widgets/pureair_app_bar.dart';
@@ -119,9 +122,18 @@ class _LocationAndTip extends StatelessWidget {
 }
 
 class DetailsScreen extends StatefulWidget {
-  const DetailsScreen({Key key, @required this.model}) : super(key: key);
+  const DetailsScreen({
+    Key key,
+    @required this.model,
+    @required this.situation,
+    @required this.message,
+    @required this.pollutants,
+  }) : super(key: key);
 
   final Aqi model;
+  final SituationEnum situation;
+  final String message;
+  final List<Map<String, String>> pollutants;
 
   @override
   _DetailsScreenState createState() => _DetailsScreenState();
@@ -211,6 +223,122 @@ class _DetailsScreenState extends State<DetailsScreen> {
     );
   }
 
+  DetailsWidget get _buildHealthSituation {
+    return DetailsWidget(
+      size: size,
+      title: 'HEALTH SITUATION',
+      content: Container(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Container(
+              height: 36,
+              padding: EdgeInsets.all(6),
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                color: colorScheme.secondary,
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: widget.situation.index != 0
+                  ? AutoSizeText(
+                      enumToString(widget.situation),
+                      style: textTheme.headline6.copyWith(
+                        color: colorScheme.onSecondary,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    )
+                  : GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          FadePageRoute(widget: SelectHealthCondition()),
+                        );
+                      },
+                      child: AutoSizeText(
+                        'Click to select a health situation',
+                        style: textTheme.headline6.copyWith(
+                          color: colorScheme.onSecondary,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+            ),
+            SizedBox(height: 30),
+            widget.situation.index != 0
+                ? Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Text(
+                        '${widget.message}',
+                        style: textTheme.headline6,
+                      ),
+                      SizedBox(height: 30),
+                      LimitedBox(
+                        child: GridView.builder(
+                          physics: NeverScrollableScrollPhysics(),
+                          shrinkWrap: true,
+                          primary: false,
+                          gridDelegate:
+                              SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 4,
+                            mainAxisSpacing: 20,
+                            crossAxisSpacing: 25,
+                          ),
+                          itemCount: widget.pollutants.length,
+                          itemBuilder: (context, index) {
+                            final titles = widget.pollutants[index].keys;
+                            final values = widget.pollutants[index].values;
+                            title() {
+                              String title;
+                              for (String _title in titles) {
+                                switch (_title) {
+                                  case 'co':
+                                    return title = 'CO';
+                                  case 'o3':
+                                    return title = 'O\u2083';
+                                  case 'no2':
+                                    return title = 'NO\u2082';
+                                  case 'pm10':
+                                    return title = 'PM10';
+                                  case 'pm25':
+                                    return title = 'PM2.5';
+                                  default:
+                                    return title = 'SO\u2082';
+                                }
+                              }
+                              return title;
+                            }
+
+                            value() {
+                              String value;
+                              for (String _value in values) value = _value;
+                              return value;
+                            }
+
+                            return PollutantWidget(
+                              size: size,
+                              title: title(),
+                              value: value(),
+                            );
+                          },
+                        ),
+                      ),
+                    ],
+                  )
+                : Container(
+                    child: Text(
+                      'Select your preferred health situation to see air pollutants tailored to your health situation.',
+                      style: textTheme.bodyText2.copyWith(
+                          fontSize: 18,
+                          color: colorScheme.onBackground.withOpacity(0.7)),
+                    ),
+                  ),
+          ],
+        ),
+      ),
+    );
+  }
+
   Widget get _buildMainContainer {
     return Material(
       borderRadius: BorderRadius.vertical(top: Radius.circular(60)),
@@ -246,6 +374,7 @@ class _DetailsScreenState extends State<DetailsScreen> {
               ],
             ),
             SizedBox(height: 40),
+            _buildHealthSituation,
             _buildPollutantList,
             _buildRecommendations,
             _buildWeatherList,
@@ -299,4 +428,3 @@ class _DetailsScreenState extends State<DetailsScreen> {
     );
   }
 }
-

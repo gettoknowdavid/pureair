@@ -24,6 +24,16 @@ class AddFavourite extends FavouritesEvent {
   List<Object> get props => [geo, key];
 }
 
+class UpdateModel extends FavouritesEvent {
+  final SituationEnum situation;
+
+  UpdateModel(this.situation);
+
+  @override
+  List<Object> get props => [situation];
+}
+
+
 class RemoveFavourite extends FavouritesEvent {
   final Geo geo;
   final int idx;

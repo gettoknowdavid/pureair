@@ -42,6 +42,8 @@ dependencies:
   splashscreen: ^1.2.0
   uuid: ^2.2.0
   flutter_swiper: ^1.1.6
+  flutter_local_notifications: ^1.4.4+2
+  overlay_support: ^1.0.5
   geolocator:
   intl_translation:
   json_annotation:

@@ -11,11 +11,13 @@ class FavouritesLoading extends FavouritesState {
 
 class FavouritesLoaded extends FavouritesState {
   final Favourites favourites;
+  final SituationEnum situation;
 
-  FavouritesLoaded(this.favourites);
+
+  FavouritesLoaded(this.favourites,  this.situation);
 
   @override
-  List<Object> get props => [favourites];
+  List<Object> get props => [favourites,  situation];
 }
 
 class FavouritesNotLoaded extends FavouritesState {

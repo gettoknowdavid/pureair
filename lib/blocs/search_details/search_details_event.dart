@@ -14,6 +14,16 @@ class FetchSearchDetails extends SearchDetailsEvent {
   List<Object> get props => [lat, lon];
 }
 
+class UpdateModel extends SearchDetailsEvent {
+  final SituationEnum situation;
+
+  UpdateModel(this.situation);
+
+  @override
+  List<Object> get props => [situation];
+}
+
+
 class ClearSearchDetails extends SearchDetailsEvent {
   @override
   List<Object> get props => [];

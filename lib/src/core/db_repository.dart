@@ -7,16 +7,19 @@ import 'package:pureair/src/model/aqi.dart';
 import 'package:pureair/src/model/pure_air_theme.dart';
 import 'package:pureair/src/model/search_model/favourites.dart';
 import 'package:pureair/src/model/search_model/search_aqi.dart';
+import 'package:pureair/src/model/health_situation.dart';
 import 'package:sembast/sembast.dart';
 
 class DbRepository extends Repository {
   static const String AQI_STORE_NAME = '__air_quality__';
   static const String THEME_STORE_NAME = '__theme_store__';
   static const String FAVOURITES_STORE_NAME = '__favourites_store__';
+  static const String HEALTH_SITUATION_STORE_NAME = '__health_situation_store__';
 
   final store = intMapStoreFactory.store(AQI_STORE_NAME);
   final themeStore = intMapStoreFactory.store(THEME_STORE_NAME);
   final favouritesStore = intMapStoreFactory.store(FAVOURITES_STORE_NAME);
+  final healthSituationStore = intMapStoreFactory.store(HEALTH_SITUATION_STORE_NAME);
 
   Future<Database> get _database async =>
       await PureAirDatabase.instance.database;
@@ -84,6 +87,20 @@ class DbRepository extends Repository {
 
   Future saveFavourites(Favourites favourites) async {
     await favouritesStore.add(await _database, favourites.toJson());
+  }
+
+  Future<HealthSituation> get loadSituation async {
+    final finder = Finder(sortOrders: [SortOrder("key", false)]);
+    final snapshots = await healthSituationStore.find(await _database, finder: finder);
+
+    return snapshots.map((snapshot) {
+      final healthSituation = HealthSituation.fromJson(snapshot.value);
+      return healthSituation;
+    }).last;
+  }
+
+  Future saveSituation(HealthSituation situation ) async {
+    await healthSituationStore.add(await _database, situation.toJson());
   }
 
   Future deleteFavourite(String id) async {

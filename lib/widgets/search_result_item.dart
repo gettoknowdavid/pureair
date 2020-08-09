@@ -138,7 +138,9 @@ class _SearchResultItemState extends State<SearchResultItem> {
                   ),
                 ),
                 IconButton(
-                  icon: Icon(Icons.favorite_border),
+                  icon: widget.isFavourite
+                      ? Icon(Icons.favorite)
+                      : Icon(Icons.favorite_border),
                   onPressed: widget.onFavourite,
                 ),
               ],

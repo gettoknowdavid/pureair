@@ -2,7 +2,6 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pureair/blocs/favourites/favourites_bloc.dart';
-import 'package:pureair/blocs/model/model_bloc.dart';
 import 'package:pureair/blocs/search/search_bloc.dart';
 import 'package:pureair/src/core/db_repository.dart';
 import 'package:pureair/src/model/search_model/geo.dart';
@@ -22,7 +21,6 @@ class _SearchScreenState extends State<SearchScreen> {
   TextEditingController textController = TextEditingController();
   SearchBloc get searchBloc => BlocProvider.of<SearchBloc>(context);
   FavouritesBloc get favouritesBloc => BlocProvider.of<FavouritesBloc>(context);
-  ModelBloc get modelBloc => BlocProvider.of<ModelBloc>(context);
   ThemeData get theme => Theme.of(context);
 
   DbRepository repository = DbRepository();
@@ -36,6 +34,7 @@ class _SearchScreenState extends State<SearchScreen> {
     searchBloc.add(ClearSearch());
   }
 
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -44,109 +43,122 @@ class _SearchScreenState extends State<SearchScreen> {
 
     return Scaffold(
       key: _scaffoldKey,
-      body: BlocBuilder<SearchBloc, SearchState>(
-        builder: (context, state) {
-          if (state is SearchLoaded) {
-            return Container(
-              height: size.height,
-              width: size.width,
-              // color: colorScheme.background,
-              margin: EdgeInsets.only(top: 26),
+      body: BlocListener<FavouritesBloc, FavouritesState>(
+        listener: (context, state) {
+          setState(() {});
+        },
+        child: BlocBuilder<SearchBloc, SearchState>(
+          builder: (context, state) {
+            if (state is SearchLoaded) {
+             
+              return Container(
+                height: size.height,
+                width: size.width,
+                // color: colorScheme.background,
+                margin: EdgeInsets.only(top: 26),
 
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  SizedBox(height: 20),
-                  SearchTaxtField(
-                    scaffoldKey: _scaffoldKey,
-                    size: size,
-                    margin: EdgeInsets.symmetric(horizontal: 16),
-                    textController: textController,
-                  ),
-                  SizedBox(height: 30),
-                  state.searchAqi.data.length < 1
-                      ? Container()
-                      : Container(
-                          padding: EdgeInsets.fromLTRB(16, 6, 16, 16),
-                          child: Row(
-                            children: <Widget>[
-                              Container(
-                                child: Text(
-                                  'Select a station...',
-                                  style: textTheme.headline5,
-                                ),
-                              ),
-                              Spacer(),
-                              Container(
-                                height: 32,
-                                width: 32,
-                                alignment: Alignment.center,
-                                decoration: BoxDecoration(
-                                  color: colorScheme.secondary,
-                                  borderRadius: BorderRadius.circular(30),
-                                ),
-                                child: AutoSizeText(
-                                  state.searchAqi.data.length.toString(),
-                                  style: textTheme.headline6.copyWith(
-                                    fontWeight: FontWeight.w800,
-                                    color: colorScheme.onSecondary,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    SizedBox(height: 20),
+                    SearchTaxtField(
+                      scaffoldKey: _scaffoldKey,
+                      size: size,
+                      margin: EdgeInsets.symmetric(horizontal: 16),
+                      textController: textController,
+                    ),
+                    SizedBox(height: 30),
+                    state.searchAqi.data.length < 1
+                        ? Container()
+                        : Container(
+                            padding: EdgeInsets.fromLTRB(16, 6, 16, 16),
+                            child: Row(
+                              children: <Widget>[
+                                Container(
+                                  child: Text(
+                                    'Select a station...',
+                                    style: textTheme.headline5,
                                   ),
                                 ),
-                              ),
-                            ],
+                                Spacer(),
+                                Container(
+                                  height: 32,
+                                  width: 32,
+                                  alignment: Alignment.center,
+                                  decoration: BoxDecoration(
+                                    color: colorScheme.secondary,
+                                    borderRadius: BorderRadius.circular(30),
+                                  ),
+                                  child: AutoSizeText(
+                                    state.searchAqi.data.length.toString(),
+                                    style: textTheme.headline6.copyWith(
+                                      fontWeight: FontWeight.w800,
+                                      color: colorScheme.onSecondary,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
-                        ),
-                  state.searchAqi.data.length < 1
-                      ? Container(
-                          width: size.width,
-                          padding: EdgeInsets.all(26),
-                          alignment: Alignment.center,
-                          child: Text(
-                            'Sorry, there are no stations available in this location. \nTry again.',
-                            textAlign: TextAlign.center,
-                            style: textTheme.headline5,
-                          ),
-                        )
-                      : Expanded(
-                          child: ListView.builder(
-                            padding: EdgeInsets.fromLTRB(16, 0, 16, 26),
-                            itemCount: state.searchAqi.data.length,
-                            itemBuilder: (context, index) {
-                              final data = state.searchAqi.data[index];
-                              Geo geo = Geo(
-                                lat: data.station.geo[0],
-                                lon: data.station.geo[1],
-                              );
+                    state.searchAqi.data.length < 1
+                        ? Container(
+                            width: size.width,
+                            padding: EdgeInsets.all(26),
+                            alignment: Alignment.center,
+                            child: Text(
+                              'Sorry, there are no stations available in this location. \nTry again.',
+                              textAlign: TextAlign.center,
+                              style: textTheme.headline5,
+                            ),
+                          )
+                        : Expanded(
+                            child: ListView.builder(
+                              padding: EdgeInsets.fromLTRB(16, 0, 16, 26),
+                              itemCount: state.searchAqi.data.length,
+                              itemBuilder: (context, index) {
+                                final data = state.searchAqi.data[index];
+                                Geo geo = Geo(
+                                  lat: data.station.geo[0],
+                                  lon: data.station.geo[1],
+                                );
 
-                              return SearchResultItem(
-                                size: size,
-                                searchData: data,
-                                onFavourite: () {
-                                  favouritesBloc
-                                    ..add(
-                                      AddFavourite(
-                                        geo,
-                                        key: _scaffoldKey,
-                                      ),
-                                    );
-                                },
-                              );
-                            },
+                                return SearchResultItem(
+                                  size: size,
+                                  searchData: data,
+                                  isFavourite:
+                                      (favouritesBloc.state as FavouritesLoaded)
+                                          .favourites
+                                          .favModels
+                                          .map((e) => e.data.idx)
+                                          .toList()
+                                          .contains(data.uid),
+                                  onFavourite: () {
+                                    favouritesBloc
+                                      ..add(
+                                        AddFavourite(
+                                          geo,
+                                          key: _scaffoldKey,
+                                        ),
+                                      );
+                                  },
+                                );
+                              },
+                            ),
                           ),
-                        ),
-                ],
-              ),
-            );
-          } else if (state is SearchLoading) {
-            return LoadingIndicator();
-          } else {
-            return SearchWidget(
-              size: size,
-              scaffoldKey: _scaffoldKey,
-              textController: textController,
-            );
-          }
-        },
+                  ],
+                ),
+              );
+            } else if (state is SearchLoading) {
+              return LoadingIndicator();
+            } else {
+              return SearchWidget(
+                size: size,
+                scaffoldKey: _scaffoldKey,
+                textController: textController,
+              );
+            }
+          },
+        ),
       ),
     );
   }

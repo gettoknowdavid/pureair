@@ -4,12 +4,15 @@ import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
-import 'package:pureair/blocs/model/model_bloc.dart';
+import 'package:pureair/blocs/situation/situation_bloc.dart';
+import 'package:pureair/screens/details_screen.dart';
 import 'package:pureair/src/core/aqi_helper.dart';
 import 'package:pureair/widgets/aqi_widget.dart';
 import 'package:pureair/widgets/check_connection_widget.dart';
 import 'package:pureair/widgets/error_screen.dart';
+import 'package:pureair/widgets/fade_page_route.dart';
 import 'package:pureair/widgets/loading_indicator.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -20,11 +23,13 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   RefreshController _refreshController;
-  ModelBloc get modelBloc => BlocProvider.of<ModelBloc>(context);
+  SituationBloc get situationBloc => BlocProvider.of<SituationBloc>(context);
   StreamSubscription<ConnectivityResult> _connSubscription;
 
   Size get size => MediaQuery.of(context).size;
   final Connectivity _connectivity = Connectivity();
+
+  FlutterLocalNotificationsPlugin notifications;
 
   @override
   void initState() {
@@ -43,12 +48,12 @@ class _HomeScreenState extends State<HomeScreen> {
   Future<void> _updateConnStatus(ConnectivityResult result) async {
     if (result == ConnectivityResult.none) {
       try {
-        modelBloc.add(LoadModel());
+        situationBloc.add(LoadSituation());
       } catch (_) {
-        modelBloc.add(RefreshModel());
+        situationBloc.add(FetchModel());
       }
     } else {
-      modelBloc.add(RefreshModel());
+      situationBloc.add(FetchModel());
     }
   }
 
@@ -80,12 +85,12 @@ class _HomeScreenState extends State<HomeScreen> {
 
     if (result == ConnectivityResult.none) {
       try {
-        modelBloc.add(LoadModel());
+        situationBloc.add(LoadSituation());
       } catch (_) {
         _modalBottomSheet();
       }
     } else {
-      modelBloc.add(RefreshModel());
+      situationBloc.add(FetchModel());
     }
   }
 
@@ -108,18 +113,32 @@ class _HomeScreenState extends State<HomeScreen> {
           await Future.delayed(Duration(seconds: 5));
           _refreshController.refreshCompleted();
         },
-        child: BlocBuilder<ModelBloc, ModelState>(
+        child: BlocBuilder<SituationBloc, SituationState>(
           builder: (context, state) {
-            if (state is ModelLoaded) {
+            if (state is SituationLoaded) {
               AqiHelper helper = AqiHelper(state.model);
+              print(state.situation);
 
               return AqiWidget(
                 model: state.model,
+                message: state.message,
                 helper: helper,
                 height: double.infinity,
                 width: aqiWidgetWidth,
+                onTap: () async {
+                  Navigator.of(context).push(
+                    FadePageRoute(
+                      widget: DetailsScreen(
+                        model: state.model,
+                        situation: state.situation,
+                        message: state.message,
+                        pollutants: state.pollutants,
+                      ),
+                    ),
+                  );
+                },
               );
-            } else if (state is ModelNotLoaded) {
+            } else if (state is SituationNotLoaded) {
               return ErrorScreen(
                 size: size,
                 title: 'Please check your internet connection and try again.',

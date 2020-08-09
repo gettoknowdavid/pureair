@@ -2,25 +2,27 @@ import 'dart:math';
 
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
-import 'package:pureair/screens/details_screen.dart';
 import 'package:pureair/src/core/aqi_helper.dart';
 import 'package:pureair/src/model/aqi.dart';
 import 'package:pureair/widgets/animated_wave.dart';
 import 'package:pureair/widgets/date_formatter.dart';
-import 'package:pureair/widgets/fade_page_route.dart';
 
 class AqiWidget extends StatefulWidget {
   final double width;
   final double height;
   final Aqi model;
+  final String message;
   final AqiHelper helper;
+  final VoidCallback onTap;
 
   const AqiWidget({
     Key key,
     @required this.model,
+    @required this.message,
     @required this.width,
     this.height,
     this.helper,
+    this.onTap,
   }) : super(key: key);
   @override
   _AqiWidgetState createState() => _AqiWidgetState();
@@ -172,6 +174,33 @@ class _AqiWidgetState extends State<AqiWidget> {
           speed: 1.2,
           offset: pi / 2,
         )),
+        widget.message != ''
+            ? Positioned(
+                left: 30,
+                top: 30,
+                child: Container(
+                  width: size.width * 0.72,
+                  child: Material(
+                    color: widget.helper.color == Color(0xff000000)
+                        ? Colors.white60
+                        : Colors.black26,
+                    borderRadius: BorderRadius.circular(20),
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(
+                        '${widget.message}',
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: textTheme.bodyText2.copyWith(
+                          fontSize: 14,
+                          color: widget.helper.color,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              )
+            : Container(),
       ],
     );
   }
@@ -181,13 +210,7 @@ class _AqiWidgetState extends State<AqiWidget> {
     AqiHelper helper = AqiHelper(widget.model);
 
     return GestureDetector(
-      onTap: () {
-        Navigator.of(context).push(
-          FadePageRoute(
-            widget: DetailsScreen(model: widget.model),
-          ),
-        );
-      },
+      onTap: widget.onTap,
       child: Container(
         width: widget.width,
         color: helper.backgroundColor,

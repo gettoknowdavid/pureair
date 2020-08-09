@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:pureair/blocs/favourites/favourites_bloc.dart';
-import 'package:pureair/src/model/situation.dart';
+import 'package:pureair/blocs/situation/situation_bloc.dart';
+import 'package:pureair/src/model/health_situation.dart';
 import 'package:pureair/widgets/custom_back_button.dart';
 import 'package:pureair/widgets/pureair_app_bar.dart';
 
@@ -38,21 +38,43 @@ class SelectHealthCondition extends StatelessWidget {
       );
     }
 
-    return BlocBuilder<FavouritesBloc, FavouritesState>(
+    return BlocBuilder<SituationBloc, SituationState>(
       builder: (context, state) {
         return MediaQuery(
           data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
           child: Scaffold(
             appBar: PureAirAppBar(leading: PureAirBackButton()),
-            body: ListView.builder(
-              padding: EdgeInsets.symmetric(horizontal: 24),
-              itemCount: SituationEnum.values.length,
-              itemBuilder: (context, index) {
-                return _buildListTile(
-                  SituationEnum.values[index],
-                  isSelected: true,
-                  onTap: () {},
-                );
+            body: BlocBuilder<SituationBloc, SituationState>(
+              builder: (context, state) {
+                if (state is SituationLoaded) {
+                  return ListView.builder(
+                    padding: EdgeInsets.symmetric(horizontal: 24),
+                    itemCount: SituationEnum.values.length,
+                    itemBuilder: (context, index) {
+                      return _buildListTile(
+                        SituationEnum.values[index],
+                        isSelected: SituationEnum.values[index].index ==
+                            state.situation.index,
+                        onTap: () {
+                          print(SituationEnum.values[index]);
+                          context.bloc<SituationBloc>().add(
+                              UpdateSituation(SituationEnum.values[index]));
+                        },
+                      );
+                    },
+                  );
+                } else {
+                  return ListView.builder(
+                    padding: EdgeInsets.symmetric(horizontal: 24),
+                    itemCount: SituationEnum.values.length,
+                    itemBuilder: (context, index) {
+                      return _buildListTile(
+                        SituationEnum.values[index],
+                        isSelected: SituationEnum.values[index].index == 0,
+                      );
+                    },
+                  );
+                }
               },
             ),
           ),
