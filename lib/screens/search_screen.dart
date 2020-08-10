@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pureair/blocs/favourites/favourites_bloc.dart';
 import 'package:pureair/blocs/search/search_bloc.dart';
 import 'package:pureair/src/core/db_repository.dart';
+import 'package:pureair/src/model/aqi.dart';
 import 'package:pureair/src/model/search_model/geo.dart';
 import 'package:pureair/src/model/search_model/search_data.dart';
 import 'package:pureair/widgets/loading_indicator.dart';
@@ -34,7 +35,6 @@ class _SearchScreenState extends State<SearchScreen> {
     searchBloc.add(ClearSearch());
   }
 
-
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -50,7 +50,6 @@ class _SearchScreenState extends State<SearchScreen> {
         child: BlocBuilder<SearchBloc, SearchState>(
           builder: (context, state) {
             if (state is SearchLoaded) {
-             
               return Container(
                 height: size.height,
                 width: size.width,
@@ -121,17 +120,23 @@ class _SearchScreenState extends State<SearchScreen> {
                                   lat: data.station.geo[0],
                                   lon: data.station.geo[1],
                                 );
+                                List<Aqi> favList;
+                                if (favouritesBloc.state is FavouritesLoaded) {
+                                  favList =
+                                      (favouritesBloc.state as FavouritesLoaded)
+                                          .favourites
+                                          .favModels;
+                                } else {
+                                  favList = [];
+                                }
 
                                 return SearchResultItem(
                                   size: size,
                                   searchData: data,
-                                  isFavourite:
-                                      (favouritesBloc.state as FavouritesLoaded)
-                                          .favourites
-                                          .favModels
-                                          .map((e) => e.data.idx)
-                                          .toList()
-                                          .contains(data.uid),
+                                  isFavourite: favList
+                                      .map((e) => e.data.idx)
+                                      .toList()
+                                      .contains(data.uid),
                                   onFavourite: () {
                                     favouritesBloc
                                       ..add(

@@ -53,7 +53,10 @@ class FavouritesBloc extends Bloc<FavouritesEvent, FavouritesState> {
           yield FavouritesLoaded(favourites, situation);
         }
       } catch (_) {
-        yield FavouritesNotLoaded();
+        yield FavouritesLoaded(
+          Favourites(geos: [], favModels: []),
+          (situationBloc.state as SituationLoaded).situation,
+        );
       }
     } else if (event is RefreshFavourites) {
       // yield FavouritesLoading();
