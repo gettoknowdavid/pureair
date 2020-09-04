@@ -3,9 +3,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:overlay_support/overlay_support.dart';
 import 'package:pureair/blocs/theme/theme_bloc.dart';
-import 'package:pureair/screens/screen_controller.dart';
 import 'package:pureair/src/core/db_repository.dart';
-import 'package:splashscreen/splashscreen.dart';
+import 'package:pureair/widgets/pure_air_splash_screen.dart';
 
 class App extends StatelessWidget {
   @override
@@ -21,21 +20,7 @@ class App extends StatelessWidget {
               child: MaterialApp(
                 theme: state.theme,
                 debugShowCheckedModeBanner: false,
-                home: SplashScreen(
-                  navigateAfterSeconds: ScreenController(),
-                  seconds: 5,
-                  title: Text(
-                    'PureAir',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 20.0,
-                    ),
-                  ),
-                  image: Image.asset('images/appicon.png'),
-                  backgroundColor: Colors.white,
-                  photoSize: 100.0,
-                  // loaderColor: Colors.red,
-                ),
+                home: PureAirSplashScreen(),
               ),
             );
           } else {
@@ -50,3 +35,4 @@ class App extends StatelessWidget {
     );
   }
 }
+

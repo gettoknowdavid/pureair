@@ -98,11 +98,11 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
 
-    // final aqiWidgetHeight = size.height;
+
     final aqiWidgetWidth = size.width;
 
     return Scaffold(
-      // backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+
       key: _scaffoldKey,
       body: SmartRefresher(
         controller: _refreshController,

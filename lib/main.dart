@@ -5,7 +5,6 @@ import 'package:pureair/src/core/db_repository.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   DbRepository repository = DbRepository();
-  
 
   runPureAir(repository);
 }

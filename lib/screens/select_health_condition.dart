@@ -86,8 +86,6 @@ class SelectHealthCondition extends StatelessWidget {
 
 String enumToString(dynamic input) {
   String name = input.toString().split('.').last;
-  // String firstLetter = name[0].toUpperCase();
-  // final otherLetters = name.split(name[0]);
   if (name == 'asthma')
     return 'Asthma';
   else if (name == 'bronchitis')
@@ -101,7 +99,3 @@ String enumToString(dynamic input) {
   else
     return 'None';
 }
-// String enumFormatter(dynamic input) {
-//   final name = enumToString(input);
-//   if ()
-// }

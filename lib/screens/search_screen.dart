@@ -53,7 +53,6 @@ class _SearchScreenState extends State<SearchScreen> {
               return Container(
                 height: size.height,
                 width: size.width,
-                // color: colorScheme.background,
                 margin: EdgeInsets.only(top: 26),
 
                 child: Column(

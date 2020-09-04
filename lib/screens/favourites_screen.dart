@@ -44,64 +44,7 @@ class _FavouritesScreenState extends State<FavouritesScreen> {
   void initState() {
     super.initState();
     _refreshController = RefreshController(initialRefresh: false);
-    // _connSubscription =
-    //     _connectivity.onConnectivityChanged.listen(_updateConnStatus);
   }
-
-  @override
-  void dispose() {
-    // _connSubscription.cancel();
-    super.dispose();
-  }
-
-  // Future<void> _updateConnStatus(ConnectivityResult result) async {
-  //   if (result == ConnectivityResult.none) {
-  //     try {
-  //       favouritesBloc.add(LoadFavourites());
-  //     } catch (_) {
-  //       favouritesBloc.add(RefreshFavourites());
-  //     }
-  //   } else {
-  //     favouritesBloc.add(RefreshFavourites());
-  //   }
-  // }
-
-  // Future<void> initConnectivity() async {
-  //   ConnectivityResult result;
-  //   try {
-  //     result = await _connectivity.checkConnectivity();
-  //   } on PlatformException catch (e) {
-  //     print(e.toString());
-  //   }
-  //   if (!mounted) return Future.value(null);
-
-  //   return _updateConnStatus(result);
-  // }
-
-  // _modalBottomSheet() {
-  //   showModalBottomSheet(
-  //     context: context,
-  //     backgroundColor: Colors.transparent,
-  //     isDismissible: true,
-  //     builder: (context) {
-  //       return CheckConnectionWidget(size: size);
-  //     },
-  //   );
-  // }
-
-  // get refresher async {
-  //   var result = await _connectivity.checkConnectivity();
-
-  //   if (result == ConnectivityResult.none) {
-  //     try {
-  //       favouritesBloc.add(LoadFavourites());
-  //     } catch (_) {
-  //       _modalBottomSheet();
-  //     }
-  //   } else {
-  //     favouritesBloc.add(RefreshFavourites());
-  //   }
-  // }
 
   bool showRemoveButtons = true;
 
@@ -113,38 +56,33 @@ class _FavouritesScreenState extends State<FavouritesScreen> {
     return Scaffold(
       key: _scaffoldKey,
       backgroundColor: colorScheme.background,
-      appBar: widget.showAppBar
-          ? PureAirAppBar(
-              leading: PureAirBackButton(),
-              title: 'FAVOURITES',
-              actions: Row(
-                children: <Widget>[
-                  IconButton(
-                    icon: Icon(Icons.refresh),
-                    onPressed: () {
-                      favouritesBloc.add(RefreshFavourites());
-                    },
-                  ),
-                  IconButton(
-                    icon: !showRemoveButtons
-                        ? Icon(Icons.cancel, color: Colors.red)
-                        : Icon(Icons.edit),
-                    onPressed: () {
-                      setState(() {
-                        showRemoveButtons = !showRemoveButtons;
-                      });
-                    },
-                  ),
-                ],
-              ),
-            )
-          : null,
+      appBar: PureAirAppBar(
+        leading: PureAirBackButton(),
+        title: 'FAVOURITES',
+        actions: Row(
+          children: <Widget>[
+            IconButton(
+              icon: Icon(Icons.refresh),
+              onPressed: () {
+                favouritesBloc.add(RefreshFavourites());
+              },
+            ),
+            IconButton(
+              icon: !showRemoveButtons
+                  ? Icon(Icons.cancel, color: Colors.red)
+                  : Icon(Icons.edit),
+              onPressed: () {
+                setState(() {
+                  showRemoveButtons = !showRemoveButtons;
+                });
+              },
+            ),
+          ],
+        ),
+      ),
       body: BlocBuilder<FavouritesBloc, FavouritesState>(
         builder: (context, state) {
           if (state is FavouritesLoaded) {
-            // final safeCities = state.safeCities;
-            // final flaggedCities = state.safeCities;
-
             return SmartRefresher(
               controller: _refreshController,
               enablePullDown: true,
@@ -160,22 +98,27 @@ class _FavouritesScreenState extends State<FavouritesScreen> {
                 itemCount: state.favourites.favModels.length,
                 itemBuilder: (context, index) {
                   final model = state.favourites.favModels[index];
-                  // print('FROM FAVOURITE SCREEN ${state.favModels.map((e) => e.data.city.name)}');
+
                   final data = model.data;
-                  Geo geo = Geo(
-                    lat: data.city.geo[0],
-                    lon: data.city.geo[1],
-                  );
+
+                  Geo geo = Geo(lat: data.city.geo[0], lon: data.city.geo[1]);
+
                   final helper = AqiHelper(model);
+
                   final situationHelper = SituationHelper();
+
                   final message =
                       situationHelper.tailoredMessage(state.situation, model);
+
                   final pollutants =
                       situationHelper.pollutants(state.situation, model);
 
+
                   Favourites flaggedCities = situationHelper.flagged(
                       state.favourites, state.situation);
+
                   Aqi flaggedModel;
+
                   for (Aqi ff in flaggedCities.favModels) {
                     flaggedModel = ff;
                   }
@@ -207,7 +150,7 @@ class _FavouritesScreenState extends State<FavouritesScreen> {
                         data.idx,
                         key: _scaffoldKey,
                       ));
-                      // showRemoveButtons = !showRemoveButtons;
+
                     },
                   );
                 },

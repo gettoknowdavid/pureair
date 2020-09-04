@@ -5,121 +5,18 @@ import 'package:pureair/src/core/aqi_helper.dart';
 import 'package:pureair/src/model/aqi.dart';
 import 'package:pureair/src/model/health_situation.dart';
 import 'package:pureair/widgets/custom_back_button.dart';
+import 'package:pureair/widgets/details_widget.dart';
 import 'package:pureair/widgets/dominant_pollutant.dart';
 import 'package:pureair/widgets/fade_page_route.dart';
+import 'package:pureair/widgets/health_situation_button.dart';
+import 'package:pureair/widgets/health_situation_grid.dart';
+import 'package:pureair/widgets/health_situation_widget.dart';
+import 'package:pureair/widgets/location_and_tip.dart';
 import 'package:pureair/widgets/more_info_widget.dart';
 import 'package:pureair/widgets/pollutant_widget.dart';
 import 'package:pureair/widgets/pureair_app_bar.dart';
 import 'package:pureair/widgets/recommendations_widget.dart';
 import 'package:pureair/widgets/weather_widget.dart';
-
-class DetailsWidget extends StatelessWidget {
-  const DetailsWidget({
-    Key key,
-    @required this.size,
-    @required this.title,
-    this.content,
-    this.addDivider = true,
-  }) : super(key: key);
-
-  final Size size;
-  final String title;
-  final Widget content;
-  final bool addDivider;
-
-  @override
-  Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
-    final colorScheme = Theme.of(context).colorScheme;
-
-    Widget divider() {
-      if (addDivider)
-        return Divider();
-      else
-        return Container();
-    }
-
-    return Container(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Text(
-            title.toUpperCase(),
-            style: textTheme.headline6.copyWith(
-              color: colorScheme.onBackground.withOpacity(0.7),
-              fontWeight: FontWeight.w800,
-              letterSpacing: 2,
-            ),
-          ),
-          SizedBox(height: 26),
-          content,
-          SizedBox(height: 26),
-          divider(),
-          SizedBox(height: 40),
-        ],
-      ),
-    );
-  }
-}
-
-class _LocationAndTip extends StatelessWidget {
-  const _LocationAndTip({
-    Key key,
-    @required this.size,
-    @required this.model,
-  }) : super(key: key);
-
-  final Size size;
-  final Aqi model;
-
-  @override
-  Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
-    final colorScheme = Theme.of(context).colorScheme;
-
-    Text _buildHealthConcern(TextTheme textTheme) {
-      final helper = AqiHelper(model);
-
-      return Text(
-        helper.healthConcern,
-        style: textTheme.headline5.copyWith(
-            fontSize: 30,
-            fontWeight: FontWeight.w700,
-            color: colorScheme.onBackground),
-      );
-    }
-
-    Text _buidLocation(TextTheme textTheme) {
-      return Text(
-        '${model.data.city.name}'.toUpperCase(),
-        maxLines: 3,
-        softWrap: true,
-        overflow: TextOverflow.ellipsis,
-        style: textTheme.headline6.copyWith(
-          fontSize: 16,
-          letterSpacing: 3,
-          fontWeight: FontWeight.w600,
-          color: colorScheme.onBackground.withOpacity(0.8),
-        ),
-      );
-    }
-
-    return Container(
-      width: size.width,
-      alignment: Alignment.topLeft,
-      padding: EdgeInsets.fromLTRB(26, 40, 26, 16),
-      color: colorScheme.background,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          _buidLocation(textTheme),
-          SizedBox(height: 12),
-          _buildHealthConcern(textTheme),
-        ],
-      ),
-    );
-  }
-}
 
 class DetailsScreen extends StatefulWidget {
   const DetailsScreen({
@@ -172,7 +69,6 @@ class _DetailsScreenState extends State<DetailsScreen> {
           softWrap: false,
           textAlign: TextAlign.center,
           style: textTheme.headline1.copyWith(
-            // fontSize: 250,
             fontWeight: FontWeight.w900,
             color: helper.color,
           ),
@@ -227,114 +123,11 @@ class _DetailsScreenState extends State<DetailsScreen> {
     return DetailsWidget(
       size: size,
       title: 'HEALTH SITUATION',
-      content: Container(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Container(
-              height: 36,
-              padding: EdgeInsets.all(6),
-              alignment: Alignment.center,
-              decoration: BoxDecoration(
-                color: colorScheme.secondary,
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: widget.situation.index != 0
-                  ? AutoSizeText(
-                      enumToString(widget.situation),
-                      style: textTheme.headline6.copyWith(
-                        color: colorScheme.onSecondary,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    )
-                  : GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          FadePageRoute(widget: SelectHealthCondition()),
-                        );
-                      },
-                      child: AutoSizeText(
-                        'Click to select a health situation',
-                        style: textTheme.headline6.copyWith(
-                          color: colorScheme.onSecondary,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-            ),
-            SizedBox(height: 30),
-            widget.situation.index != 0
-                ? Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Text(
-                        '${widget.message}',
-                        style: textTheme.headline6,
-                      ),
-                      SizedBox(height: 30),
-                      LimitedBox(
-                        child: GridView.builder(
-                          physics: NeverScrollableScrollPhysics(),
-                          shrinkWrap: true,
-                          primary: false,
-                          gridDelegate:
-                              SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 4,
-                            mainAxisSpacing: 20,
-                            crossAxisSpacing: 25,
-                          ),
-                          itemCount: widget.pollutants.length,
-                          itemBuilder: (context, index) {
-                            final titles = widget.pollutants[index].keys;
-                            final values = widget.pollutants[index].values;
-                            title() {
-                              String title;
-                              for (String _title in titles) {
-                                switch (_title) {
-                                  case 'co':
-                                    return title = 'CO';
-                                  case 'o3':
-                                    return title = 'O\u2083';
-                                  case 'no2':
-                                    return title = 'NO\u2082';
-                                  case 'pm10':
-                                    return title = 'PM10';
-                                  case 'pm25':
-                                    return title = 'PM2.5';
-                                  default:
-                                    return title = 'SO\u2082';
-                                }
-                              }
-                              return title;
-                            }
-
-                            value() {
-                              String value;
-                              for (String _value in values) value = _value;
-                              return value;
-                            }
-
-                            return PollutantWidget(
-                              size: size,
-                              title: title(),
-                              value: value(),
-                            );
-                          },
-                        ),
-                      ),
-                    ],
-                  )
-                : Container(
-                    child: Text(
-                      'Select your preferred health situation to see air pollutants tailored to your health situation.',
-                      style: textTheme.bodyText2.copyWith(
-                          fontSize: 18,
-                          color: colorScheme.onBackground.withOpacity(0.7)),
-                    ),
-                  ),
-          ],
-        ),
+      content: HealthSituationWidget(
+        message: widget.message,
+        pollutants: widget.pollutants,
+        situation: widget.situation,
+        size: size,
       ),
     );
   }
@@ -392,7 +185,7 @@ class _DetailsScreenState extends State<DetailsScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.end,
           children: <Widget>[
-            _LocationAndTip(
+            LocationAndTip(
               size: size,
               model: widget.model,
             ),
@@ -418,10 +211,7 @@ class _DetailsScreenState extends State<DetailsScreen> {
               : Colors.black,
           child: ClipRRect(
             borderRadius: BorderRadius.circular(60),
-            child: ListView(
-              shrinkWrap: true,
-              children: _buildList,
-            ),
+            child: ListView(shrinkWrap: true, children: _buildList),
           ),
         ),
       ),
