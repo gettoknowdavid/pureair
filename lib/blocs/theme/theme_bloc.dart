@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
-import 'package:pureair/src/core/db_repository.dart';
 import 'package:pureair/src/core/repository.dart';
 import 'package:pureair/src/model/pure_air_theme.dart';
 import 'package:pureair/themes.dart';

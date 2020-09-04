@@ -1,14 +1,12 @@
-import 'dart:convert';
-
 import 'package:pureair/src/core/base_model.dart';
 import 'package:pureair/src/core/dao.dart';
 import 'package:pureair/src/core/repository.dart';
 import 'package:pureair/src/database/pureair_database.dart';
 import 'package:pureair/src/model/aqi.dart';
+import 'package:pureair/src/model/health_situation.dart';
 import 'package:pureair/src/model/pure_air_theme.dart';
 import 'package:pureair/src/model/search_model/favourites.dart';
 import 'package:pureair/src/model/search_model/search_aqi.dart';
-import 'package:pureair/src/model/health_situation.dart';
 import 'package:sembast/sembast.dart';
 
 class DbRepository extends Repository {

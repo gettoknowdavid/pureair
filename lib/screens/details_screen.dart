@@ -1,15 +1,11 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
-import 'package:pureair/screens/select_health_condition.dart';
 import 'package:pureair/src/core/aqi_helper.dart';
 import 'package:pureair/src/model/aqi.dart';
 import 'package:pureair/src/model/health_situation.dart';
 import 'package:pureair/widgets/custom_back_button.dart';
 import 'package:pureair/widgets/details_widget.dart';
 import 'package:pureair/widgets/dominant_pollutant.dart';
-import 'package:pureair/widgets/fade_page_route.dart';
-import 'package:pureair/widgets/health_situation_button.dart';
-import 'package:pureair/widgets/health_situation_grid.dart';
 import 'package:pureair/widgets/health_situation_widget.dart';
 import 'package:pureair/widgets/location_and_tip.dart';
 import 'package:pureair/widgets/more_info_widget.dart';
