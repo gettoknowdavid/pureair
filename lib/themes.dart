@@ -4,12 +4,6 @@ TextTheme _textTheme(TextTheme base) {
   return base.copyWith().apply(fontFamily: 'ProductSans');
 }
 
-// IconThemeData _iconTheme(IconThemeData base) {
-//   return base.copyWith(
-//     color:
-//   );
-// }
-
 const Color _primary = const Color(0xFF0460D9);
 const Color _primaryVariant = const Color(0xFF0476D9);
 const Color _secondary = const Color(0xFFF24F13);
@@ -22,8 +16,6 @@ const Color _error = const Color(0xFF1E3E59);
 const Color _onError = const Color(0xFFF0F5FD);
 const Color _background = const Color(0xFFF0F5FD);
 const Color _surface = const Color(0xFFF0F5FD);
-
-// final ThemeData kLightTheme = _buildLightTheme;
 
 final dividerTheme = DividerThemeData(thickness: 1.2);
 
@@ -60,7 +52,6 @@ final ThemeData kDarkTheme = _buildDarkTheme;
 ThemeData get _buildDarkTheme {
   final ThemeData base = ThemeData.dark();
   return base.copyWith(
-    // scaffoldBackgroundColor: Colors.grey[400],
     colorScheme: ColorScheme.dark().copyWith(
       primary: _primary,
       onPrimary: _onPrimary,
