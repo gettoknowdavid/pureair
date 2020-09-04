@@ -4,6 +4,7 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:pureair/src/core/db_repository.dart';
+import 'package:pureair/src/core/repository.dart';
 import 'package:pureair/src/model/pure_air_theme.dart';
 import 'package:pureair/themes.dart';
 
@@ -11,9 +12,9 @@ part 'theme_event.dart';
 part 'theme_state.dart';
 
 class ThemeBloc extends Bloc<ThemeEvent, ThemeState> {
-  ThemeBloc() : super(ThemeLoading());
+  ThemeBloc(this.repository) : super(ThemeLoading());
 
-  final DbRepository repository = DbRepository();
+  final Repository repository;
 
   @override
   Stream<ThemeState> mapEventToState(

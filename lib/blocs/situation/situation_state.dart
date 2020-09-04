@@ -1,3 +1,5 @@
+//The Situation State
+
 part of 'situation_bloc.dart';
 
 abstract class SituationState extends Equatable {

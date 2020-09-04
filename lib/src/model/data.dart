@@ -1,3 +1,5 @@
+// The data class wraps up all the other classes and
+// is finally passed on to the main Aqi class
 import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'attribution.dart';
@@ -34,8 +36,7 @@ class Data extends Equatable {
   final Debug debug;
 
   @override
-  List<Object> get props =>
-      [aqi, idx, attributions, city, dominentpol, iaqi, time, forecast, debug];
+  List<Object> get props => [aqi, idx, attributions, city, dominentpol, iaqi, time, forecast, debug];
 
   static Data fromJson(Map<String, dynamic> json) => _$DataFromJson(json);
   Map<String, dynamic> toJson() => _$DataToJson(this);

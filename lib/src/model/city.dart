@@ -1,3 +1,6 @@
+// The city class properties are the coordinates, the name and
+// url of the city where the air monitoring station is located
+
 import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
 

@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:overlay_support/overlay_support.dart';
 import 'package:pureair/blocs/theme/theme_bloc.dart';
 import 'package:pureair/screens/screen_controller.dart';
+import 'package:pureair/src/core/db_repository.dart';
 import 'package:splashscreen/splashscreen.dart';
 
 class App extends StatelessWidget {
@@ -12,7 +13,7 @@ class App extends StatelessWidget {
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
 
     return BlocProvider(
-      create: (context) => ThemeBloc()..add(LoadTheme()),
+      create: (context) => ThemeBloc(DbRepository())..add(LoadTheme()),
       child: BlocBuilder<ThemeBloc, ThemeState>(
         builder: (context, state) {
           if (state is ThemeLoaded) {

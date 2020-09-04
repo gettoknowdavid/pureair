@@ -1,3 +1,6 @@
+// The main class that puts together all the other classes from the 
+// API response.
+
 import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'data.dart';

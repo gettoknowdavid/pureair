@@ -4,7 +4,8 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:pureair/blocs/situation/situation_bloc.dart';
 import 'package:pureair/blocs/situation_helper.dart';
-import 'package:pureair/src/core/pureair_dao.dart';
+import 'package:pureair/src/core/base_model.dart';
+import 'package:pureair/src/core/dao.dart';
 import 'package:pureair/src/model/aqi.dart';
 import 'package:pureair/src/model/health_situation.dart';
 
@@ -33,14 +34,14 @@ class SearchDetailsBloc extends Bloc<SearchDetailsEvent, SearchDetailsState> {
     if (event is FetchSearchDetails) {
       yield SearchDetailsLoading();
       try {
-        Aqi model = await dao.fetchSearchDetails(event.lat, event.lon);
+        BaseModel<Aqi> baseModel = await dao.getSearchDetails(event.lat, event.lon);
         SituationEnum situation =
             (situationBloc.state as SituationLoaded).situation;
-        String message = helper.tailoredMessage(situation, model);
+        String message = helper.tailoredMessage(situation, baseModel.data);
         List<Map<String, String>> pollutants =
-            helper.pollutants(situation, model);
+            helper.pollutants(situation, baseModel.data);
 
-        yield SearchDetailsLoaded(model, situation, message, pollutants);
+        yield SearchDetailsLoaded(baseModel.data, situation, message, pollutants);
       } catch (_) {
         yield SearchDetailsNotLoaded();
       }

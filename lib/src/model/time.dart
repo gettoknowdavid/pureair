@@ -1,3 +1,5 @@
+// Time class: the timezone of the station's city and other details
+
 import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
 

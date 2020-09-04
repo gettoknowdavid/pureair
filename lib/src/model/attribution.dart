@@ -1,3 +1,6 @@
+// The Attributions class containing the url and name 
+// of the AQI station
+
 import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
 
@@ -18,6 +21,4 @@ class Attribution extends Equatable{
 
   static Attribution fromJson(Map<String, dynamic> json) => _$AttributionFromJson(json);
   Map<String, dynamic> toJson() => _$AttributionToJson(this);
-
-
 }

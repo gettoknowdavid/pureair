@@ -1,3 +1,8 @@
+// Iaqi class contains all the pollutants present in the air
+// CO, NO2, O3, PM10, PM2.5 and SO2
+// It also includes all the weather parameters - humidity,
+// pressure, wind speed and temperature
+
 import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'co.dart';

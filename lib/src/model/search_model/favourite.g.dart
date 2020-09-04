@@ -8,7 +8,6 @@ part of 'favourite.dart';
 
 Favourite _$FavouriteFromJson(Map<String, dynamic> json) {
   return Favourite(
-    id: json['id'] as String,
     geo: json['geo'] == null
         ? null
         : Geo.fromJson(json['geo'] as Map<String, dynamic>),
@@ -19,7 +18,6 @@ Favourite _$FavouriteFromJson(Map<String, dynamic> json) {
 }
 
 Map<String, dynamic> _$FavouriteToJson(Favourite instance) => <String, dynamic>{
-      'id': instance.id,
       'geo': instance.geo?.toJson(),
       'favModel': instance.favModel?.toJson(),
     };

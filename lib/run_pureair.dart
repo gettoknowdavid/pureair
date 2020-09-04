@@ -8,7 +8,12 @@ import 'package:pureair/blocs/search/search_bloc.dart';
 import 'package:pureair/blocs/search_details/search_details_bloc.dart';
 import 'package:pureair/blocs/situation/situation_bloc.dart';
 import 'package:pureair/blocs/tabs/tabs_bloc.dart';
+import 'package:pureair/blocs/test/index.dart';
+import 'package:pureair/blocs/test/test_bloc.dart';
 import 'package:pureair/src/core/repository.dart';
+
+// This method takes in the Repository parameter
+// which carries the data from the model.
 
 void runPureAir(Repository repository) async {
   Bloc.observer = PureAirBlocObserver();
@@ -31,8 +36,10 @@ void runPureAir(Repository repository) async {
         BlocProvider(create: (context) {
           return FavouritesBloc(
             context.bloc<SituationBloc>(),
+            repository,
           )..add(LoadFavourites());
         }),
+        BlocProvider(create: (context) => TestBloc(UnTestState())),
       ],
       child: App(),
     ),

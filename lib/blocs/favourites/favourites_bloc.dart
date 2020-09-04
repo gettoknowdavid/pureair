@@ -5,18 +5,19 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:pureair/blocs/situation/situation_bloc.dart';
 import 'package:pureair/blocs/situation_helper.dart';
-import 'package:pureair/src/core/db_repository.dart';
-import 'package:pureair/src/core/pureair_dao.dart';
+import 'package:pureair/src/core/base_model.dart';
+import 'package:pureair/src/core/dao.dart';
+import 'package:pureair/src/core/repository.dart';
 import 'package:pureair/src/model/aqi.dart';
+import 'package:pureair/src/model/health_situation.dart';
 import 'package:pureair/src/model/search_model/favourites.dart';
 import 'package:pureair/src/model/search_model/geo.dart';
-import 'package:pureair/src/model/health_situation.dart';
 
 part 'favourites_event.dart';
 part 'favourites_state.dart';
 
 class FavouritesBloc extends Bloc<FavouritesEvent, FavouritesState> {
-  FavouritesBloc(this.situationBloc)
+  FavouritesBloc(this.situationBloc, this.repository)
       : super(
           situationBloc.state is SituationLoaded
               ? FavouritesLoaded(
@@ -33,10 +34,10 @@ class FavouritesBloc extends Bloc<FavouritesEvent, FavouritesState> {
   }
 
   final SituationBloc situationBloc;
+  final Repository repository;
   StreamSubscription situationSubscription;
 
   Dao dao = Dao();
-  DbRepository repo = DbRepository();
   SituationHelper helper = SituationHelper();
 
   @override
@@ -46,7 +47,7 @@ class FavouritesBloc extends Bloc<FavouritesEvent, FavouritesState> {
     if (event is LoadFavourites) {
       try {
         if (situationBloc.state is SituationLoaded) {
-          Favourites favourites = await repo.loadFavourites;
+          Favourites favourites = await repository.loadFavourites;
           SituationEnum situation =
               (situationBloc.state as SituationLoaded).situation;
 
@@ -64,17 +65,18 @@ class FavouritesBloc extends Bloc<FavouritesEvent, FavouritesState> {
         yield FavouritesLoading();
 
         try {
-          Favourites f = await repo.loadFavourites;
+          Favourites f = await repository.loadFavourites;
           List<Geo> geos = f.geos.toList();
 
-          List<Aqi> favModels = await dao.fetchFavs(geos);
+          BaseModel<List<Aqi>> favModels = await dao.getFavourites(geos);
 
-          Favourites favourites = Favourites(geos: geos, favModels: favModels);
+          Favourites favourites =
+              Favourites(geos: geos, favModels: favModels.data);
           SituationEnum situation =
               (situationBloc.state as SituationLoaded).situation;
 
           yield FavouritesLoaded(favourites, situation);
-          await repo.saveFavourites(favourites);
+          await repository.saveFavourites(favourites);
         } catch (_) {
           SituationEnum situation =
               (situationBloc.state as SituationLoaded).situation;
@@ -107,18 +109,18 @@ class FavouritesBloc extends Bloc<FavouritesEvent, FavouritesState> {
               List<Geo>.from((state as FavouritesLoaded).favourites.geos)
                 ..add(event.geo);
 
-          Aqi favModel =
-              await dao.fetchSearchDetails(event.geo.lat, event.geo.lon);
+          BaseModel<Aqi> favModel =
+              await dao.getSearchDetails(event.geo.lat, event.geo.lon);
           List<Aqi> favModels =
               List<Aqi>.from((state as FavouritesLoaded).favourites.favModels)
-                ..add(favModel);
+                ..add(favModel.data);
 
           Favourites favourites = Favourites(geos: geos, favModels: favModels);
           SituationEnum situation =
               (situationBloc.state as SituationLoaded).situation;
 
           yield FavouritesLoaded(favourites, situation);
-          await repo.saveFavourites(favourites);
+          await repository.saveFavourites(favourites);
           event.key.currentState.showSnackBar(
             SnackBar(
               content: Container(
@@ -162,7 +164,7 @@ class FavouritesBloc extends Bloc<FavouritesEvent, FavouritesState> {
             ),
           ),
         );
-        await repo.saveFavourites(favourites);
+        await repository.saveFavourites(favourites);
       } else {
         print("SituationNotLoaded");
       }

@@ -1,3 +1,6 @@
+// The daily forecast of the air quality
+// This will not be used in this project
+
 import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'daily.dart';
