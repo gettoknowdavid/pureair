@@ -8,8 +8,6 @@ import 'package:pureair/blocs/search/search_bloc.dart';
 import 'package:pureair/blocs/search_details/search_details_bloc.dart';
 import 'package:pureair/blocs/situation/situation_bloc.dart';
 import 'package:pureair/blocs/tabs/tabs_bloc.dart';
-import 'package:pureair/blocs/test/index.dart';
-import 'package:pureair/blocs/test/test_bloc.dart';
 import 'package:pureair/src/core/repository.dart';
 
 // This method takes in the Repository parameter
@@ -39,7 +37,6 @@ void runPureAir(Repository repository) async {
             repository,
           )..add(LoadFavourites());
         }),
-        BlocProvider(create: (context) => TestBloc(UnTestState())),
       ],
       child: App(),
     ),
